@@ -1,5 +1,6 @@
 package application.base.app;
 
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import application.archive.Archive;
 import application.definition.ApplicationConfiguration;
@@ -31,6 +33,7 @@ import application.storage.StorageNotificationType;
 import application.storage.StoreDetails;
 import application.thread.ThreadServices;
 import application.timer.TimerService;
+import application.utils.Util;
 
 public abstract class ApplicationBaseForGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -145,8 +148,44 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 			new NotificationMonitor(System.out);
 		}
 		NotificationCentre.addListener(listener);
+		setLookAndFeel();
 		loadModelAndWait(storeDetails);
 		NotificationCentre.removeListener(listener);
+	}
+
+	public void setLookAndFeel() {
+		LOGGER.entering(CLASS_NAME, "setLookAndFeel");
+		if (ApplicationConfiguration.applicationDefinition().bottomColor().isPresent()) {
+			Color menuBarBackground = ApplicationConfiguration.applicationDefinition().bottomColor().get();
+			UIManager.put("MenuBar.background", menuBarBackground);
+			UIManager.put("MenuBar.disabled", menuBarBackground.darker());
+			UIManager.put("Menu.background", menuBarBackground);
+			UIManager.put("Menu.disabled", menuBarBackground.darker());
+			UIManager.put("RadioButtonMenuItem.background", menuBarBackground);
+			UIManager.put("RadioButtonMenuItem.disabled", menuBarBackground.darker());
+			UIManager.put("CheckBoxMenuItem.background", menuBarBackground);
+			UIManager.put("CheckBoxMenuItem.disabled", menuBarBackground.darker());
+			UIManager.put("MenuItem.background", menuBarBackground);
+			UIManager.put("MenuItem.disabled", menuBarBackground.darker());
+			UIManager.put("Menu.opaque", true);
+			UIManager.put("Separator.background", menuBarBackground);
+			UIManager.put("Separator.disabled", menuBarBackground.darker());
+			UIManager.put("PopupMenu.background", menuBarBackground);
+			UIManager.put("PopupMenu.disabled", menuBarBackground.darker());
+			UIManager.put("PopupMenuSeparator.background", menuBarBackground);
+			UIManager.put("PopupMenuSeparator.disabled", menuBarBackground.darker());
+		}
+		try {
+			if (Util.getOS() == Util.OS.MAC) {
+				System.setProperty("apple.laf.useScreenMenuBar", "true");
+				System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+						ApplicationConfiguration.applicationDefinition().applicationName());
+			}
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (Exception e) {
+			LOGGER.fine("Caught exception: " + e.getMessage());
+		}
+		LOGGER.exiting(CLASS_NAME, "setLookAndFeel");
 	}
 
 	private boolean invalidParameters(Parameters parameters) {
