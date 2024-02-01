@@ -1,6 +1,7 @@
 package application.base.app.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -49,6 +51,15 @@ public class PreferencesDialog extends JDialog {
 	private JTextField emailRecipients;
 	private JButton editEmailList;
 	private JCheckBox monitorNotifications;
+	private JLabel lblNewLabel_3;
+	private JButton selectTopColourButton;
+	private JLabel topColorPreview;
+	private JLabel lblNewLabel_2;
+	private JButton selectBottomColourButton;
+	private JLabel bottomColorPreview;
+
+	private Color topColor;
+	private Color bottomColor;
 
 	/**
 	 * Launch the application.
@@ -71,7 +82,8 @@ public class PreferencesDialog extends JDialog {
 		LOGGER.entering(CLASS_NAME, "init");
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("Preferences");
-		contentPanel = new ColoredPanel();
+//		contentPanel = new ColoredPanel();
+		contentPanel = new JPanel();
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -88,7 +100,8 @@ public class PreferencesDialog extends JDialog {
 						FormSpecs.DEFAULT_COLSPEC, },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
 						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 		{
 			lblNewLabel = new JLabel("Logging Level:");
 			contentPanel.add(lblNewLabel, "2, 2, right, default");
@@ -124,7 +137,34 @@ public class PreferencesDialog extends JDialog {
 			contentPanel.add(monitorNotifications, "4, 8");
 		}
 		{
-			JPanel buttonPane = new BottomColoredPanel();
+			lblNewLabel_3 = new JLabel("Top Colour:");
+			contentPanel.add(lblNewLabel_3, "2, 10, right, default");
+		}
+		{
+			selectTopColourButton = new JButton("Select colour");
+			contentPanel.add(selectTopColourButton, "4, 10");
+		}
+		{
+			topColorPreview = new JLabel("  ");
+			topColorPreview.setOpaque(true);
+			contentPanel.add(topColorPreview, "6, 10");
+		}
+		{
+			lblNewLabel_2 = new JLabel("Bottom Colour:");
+			contentPanel.add(lblNewLabel_2, "2, 12, right, default");
+		}
+		{
+			selectBottomColourButton = new JButton("Select Colour");
+			contentPanel.add(selectBottomColourButton, "4, 12");
+		}
+		{
+			bottomColorPreview = new JLabel("  ");
+			bottomColorPreview.setOpaque(true);
+			contentPanel.add(bottomColorPreview, "6, 12");
+		}
+		{
+//			JPanel buttonPane = new BottomColoredPanel();
+			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
@@ -177,10 +217,28 @@ public class PreferencesDialog extends JDialog {
 			}
 			dialog.dispose();
 		});
+		selectTopColourButton.addActionListener((e) -> {
+			Color tColor = JColorChooser.showDialog(this, "Choose Top Color", topColor);
+			if (tColor == null) {
+				return;
+			}
+			topColor = tColor;
+			topColorPreview.setBackground(topColor);
+		});
+		selectBottomColourButton.addActionListener((e) -> {
+			Color bColor = JColorChooser.showDialog(this, "Choose Bottom Color", bottomColor);
+			if (bColor == null) {
+				return;
+			}
+			bottomColor = bColor;
+			bottomColorPreview.setBackground(bottomColor);
+		});
 
 		addLoggingLevelChoices();
 		initializeFields();
 		setButtonsStatus();
+		topColorPreview.setBackground(topColor);
+		bottomColorPreview.setBackground(bottomColor);
 
 		pack();
 
@@ -193,6 +251,12 @@ public class PreferencesDialog extends JDialog {
 		IniFile.store(GUIConstants.EMAIL_NOTIFICATION, Boolean.toString(sendEmailNotifications.isSelected()));
 		IniFile.store(GUIConstants.EMAIL_LIST, emailRecipients.getText());
 		IniFile.store(GUIConstants.MONITORING, Boolean.toString(monitorNotifications.isSelected()));
+		IniFile.store(GUIConstants.TOP_RED, Integer.toString(topColor.getRed()));
+		IniFile.store(GUIConstants.TOP_GREEN, Integer.toString(topColor.getGreen()));
+		IniFile.store(GUIConstants.TOP_BLUE, Integer.toString(topColor.getBlue()));
+		IniFile.store(GUIConstants.BOTTOM_RED, Integer.toString(bottomColor.getRed()));
+		IniFile.store(GUIConstants.BOTTOM_GREEN, Integer.toString(bottomColor.getGreen()));
+		IniFile.store(GUIConstants.BOTTOM_BLUE, Integer.toString(bottomColor.getBlue()));
 	}
 
 	private void initializeFields() {
@@ -204,6 +268,8 @@ public class PreferencesDialog extends JDialog {
 		sendEmailNotifications.setSelected(Boolean.valueOf(IniFile.value(GUIConstants.EMAIL_NOTIFICATION)));
 		emailRecipients.setText(IniFile.value(GUIConstants.EMAIL_LIST));
 		monitorNotifications.setSelected(Boolean.valueOf(IniFile.value(GUIConstants.MONITORING)));
+		initializeTopColor();
+		initializeBottomColor();
 	}
 
 	private void addLoggingLevelChoices() {
@@ -218,6 +284,38 @@ public class PreferencesDialog extends JDialog {
 		} else {
 			editEmailList.setEnabled(false);
 		}
+	}
+
+	private void initializeTopColor() {
+		int red = GUIConstants.DEFAULT_TOP_COLOR.getRed();
+		int green = GUIConstants.DEFAULT_TOP_COLOR.getGreen();
+		int blue = GUIConstants.DEFAULT_TOP_COLOR.getBlue();
+		if (!IniFile.value(GUIConstants.TOP_RED).isEmpty()) {
+			red = Integer.parseInt(IniFile.value(GUIConstants.TOP_RED));
+		}
+		if (!IniFile.value(GUIConstants.TOP_GREEN).isEmpty()) {
+			green = Integer.parseInt(IniFile.value(GUIConstants.TOP_GREEN));
+		}
+		if (!IniFile.value(GUIConstants.TOP_BLUE).isEmpty()) {
+			blue = Integer.parseInt(IniFile.value(GUIConstants.TOP_BLUE));
+		}
+		topColor = new Color(red, green, blue);
+	}
+
+	private void initializeBottomColor() {
+		int red = GUIConstants.DEFAULT_BOTTOM_COLOR.getRed();
+		int green = GUIConstants.DEFAULT_BOTTOM_COLOR.getGreen();
+		int blue = GUIConstants.DEFAULT_BOTTOM_COLOR.getBlue();
+		if (!IniFile.value(GUIConstants.BOTTOM_RED).isEmpty()) {
+			red = Integer.parseInt(IniFile.value(GUIConstants.BOTTOM_RED));
+		}
+		if (!IniFile.value(GUIConstants.BOTTOM_GREEN).isEmpty()) {
+			green = Integer.parseInt(IniFile.value(GUIConstants.BOTTOM_GREEN));
+		}
+		if (!IniFile.value(GUIConstants.BOTTOM_BLUE).isEmpty()) {
+			blue = Integer.parseInt(IniFile.value(GUIConstants.BOTTOM_BLUE));
+		}
+		bottomColor = new Color(red, green, blue);
 	}
 
 }
