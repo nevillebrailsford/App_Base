@@ -83,8 +83,8 @@ public class PreferencesDialog extends JDialog {
 		LOGGER.entering(CLASS_NAME, "init");
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("Preferences");
-//		contentPanel = new ColoredPanel();
-		contentPanel = new JPanel();
+		contentPanel = new ColoredPanel();
+//		contentPanel = new JPanel();
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -164,8 +164,8 @@ public class PreferencesDialog extends JDialog {
 			contentPanel.add(bottomColorPreview, "6, 12");
 		}
 		{
-//			JPanel buttonPane = new BottomColoredPanel();
-			JPanel buttonPane = new JPanel();
+			JPanel buttonPane = new BottomColoredPanel();
+//			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
