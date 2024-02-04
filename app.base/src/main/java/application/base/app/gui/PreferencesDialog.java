@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -52,14 +51,16 @@ public class PreferencesDialog extends JDialog {
 	private JButton editEmailList;
 	private JCheckBox monitorNotifications;
 	private JLabel lblNewLabel_3;
-	private JButton selectTopColourButton;
 	private JLabel topColorPreview;
 	private JLabel lblNewLabel_2;
-	private JButton selectBottomColourButton;
 	private JLabel bottomColorPreview;
 
 	private Color topColor;
 	private Color bottomColor;
+	private JComboBox<String> topColourChoice;
+	private JComboBox<String> bottomColourChoice;
+
+	private static final Color defaultColor = new Color(214, 227, 223);
 
 	/**
 	 * Launch the application.
@@ -137,12 +138,12 @@ public class PreferencesDialog extends JDialog {
 			contentPanel.add(monitorNotifications, "4, 8");
 		}
 		{
-			lblNewLabel_3 = new JLabel("Top Colour:");
+			lblNewLabel_3 = new JLabel("Select Top Colour:");
 			contentPanel.add(lblNewLabel_3, "2, 10, right, default");
 		}
 		{
-			selectTopColourButton = new JButton("Select colour");
-			contentPanel.add(selectTopColourButton, "4, 10");
+			topColourChoice = new JComboBox<>();
+			contentPanel.add(topColourChoice, "4, 10, fill, default");
 		}
 		{
 			topColorPreview = new JLabel("  ");
@@ -150,12 +151,12 @@ public class PreferencesDialog extends JDialog {
 			contentPanel.add(topColorPreview, "6, 10");
 		}
 		{
-			lblNewLabel_2 = new JLabel("Bottom Colour:");
+			lblNewLabel_2 = new JLabel("Select Bottom Colour:");
 			contentPanel.add(lblNewLabel_2, "2, 12, right, default");
 		}
 		{
-			selectBottomColourButton = new JButton("Select Colour");
-			contentPanel.add(selectBottomColourButton, "4, 12");
+			bottomColourChoice = new JComboBox<>();
+			contentPanel.add(bottomColourChoice, "4, 12, fill, default");
 		}
 		{
 			bottomColorPreview = new JLabel("  ");
@@ -217,28 +218,18 @@ public class PreferencesDialog extends JDialog {
 			}
 			dialog.dispose();
 		});
-		selectTopColourButton.addActionListener((e) -> {
-			Color tColor = JColorChooser.showDialog(this, "Choose Top Color", topColor);
-			if (tColor == null) {
-				return;
-			}
-			topColor = tColor;
+		topColourChoice.addActionListener((e) -> {
+			topColor = getSelectedColor(topColourChoice);
 			topColorPreview.setBackground(topColor);
 		});
-		selectBottomColourButton.addActionListener((e) -> {
-			Color bColor = JColorChooser.showDialog(this, "Choose Bottom Color", bottomColor);
-			if (bColor == null) {
-				return;
-			}
-			bottomColor = bColor;
+		bottomColourChoice.addActionListener((e) -> {
+			bottomColor = getSelectedColor(bottomColourChoice);
 			bottomColorPreview.setBackground(bottomColor);
 		});
 
 		addLoggingLevelChoices();
 		initializeFields();
 		setButtonsStatus();
-		topColorPreview.setBackground(topColor);
-		bottomColorPreview.setBackground(bottomColor);
 
 		pack();
 
@@ -251,12 +242,8 @@ public class PreferencesDialog extends JDialog {
 		IniFile.store(GUIConstants.EMAIL_NOTIFICATION, Boolean.toString(sendEmailNotifications.isSelected()));
 		IniFile.store(GUIConstants.EMAIL_LIST, emailRecipients.getText());
 		IniFile.store(GUIConstants.MONITORING, Boolean.toString(monitorNotifications.isSelected()));
-		IniFile.store(GUIConstants.TOP_RED, Integer.toString(topColor.getRed()));
-		IniFile.store(GUIConstants.TOP_GREEN, Integer.toString(topColor.getGreen()));
-		IniFile.store(GUIConstants.TOP_BLUE, Integer.toString(topColor.getBlue()));
-		IniFile.store(GUIConstants.BOTTOM_RED, Integer.toString(bottomColor.getRed()));
-		IniFile.store(GUIConstants.BOTTOM_GREEN, Integer.toString(bottomColor.getGreen()));
-		IniFile.store(GUIConstants.BOTTOM_BLUE, Integer.toString(bottomColor.getBlue()));
+		IniFile.store(GUIConstants.TOP_COLOR, (String) topColourChoice.getSelectedItem());
+		IniFile.store(GUIConstants.BOTTOM_COLOR, (String) bottomColourChoice.getSelectedItem());
 	}
 
 	private void initializeFields() {
@@ -268,8 +255,14 @@ public class PreferencesDialog extends JDialog {
 		sendEmailNotifications.setSelected(Boolean.valueOf(IniFile.value(GUIConstants.EMAIL_NOTIFICATION)));
 		emailRecipients.setText(IniFile.value(GUIConstants.EMAIL_LIST));
 		monitorNotifications.setSelected(Boolean.valueOf(IniFile.value(GUIConstants.MONITORING)));
-		initializeTopColor();
-		initializeBottomColor();
+		initializeColorChoice(topColourChoice);
+		if (!IniFile.value(GUIConstants.TOP_COLOR).isEmpty()) {
+			topColourChoice.setSelectedItem(IniFile.value(GUIConstants.TOP_COLOR));
+		}
+		initializeColorChoice(bottomColourChoice);
+		if (!IniFile.value(GUIConstants.BOTTOM_COLOR).isEmpty()) {
+			bottomColourChoice.setSelectedItem(IniFile.value(GUIConstants.BOTTOM_COLOR));
+		}
 	}
 
 	private void addLoggingLevelChoices() {
@@ -286,36 +279,23 @@ public class PreferencesDialog extends JDialog {
 		}
 	}
 
-	private void initializeTopColor() {
-		int red = GUIConstants.DEFAULT_TOP_COLOR.getRed();
-		int green = GUIConstants.DEFAULT_TOP_COLOR.getGreen();
-		int blue = GUIConstants.DEFAULT_TOP_COLOR.getBlue();
-		if (!IniFile.value(GUIConstants.TOP_RED).isEmpty()) {
-			red = Integer.parseInt(IniFile.value(GUIConstants.TOP_RED));
+	private void initializeColorChoice(JComboBox<String> choice) {
+		String[] colors = ColorProvider.name;
+		choice.addItem("default");
+		for (int i = 0; i < colors.length; i++) {
+			choice.addItem(colors[i]);
 		}
-		if (!IniFile.value(GUIConstants.TOP_GREEN).isEmpty()) {
-			green = Integer.parseInt(IniFile.value(GUIConstants.TOP_GREEN));
-		}
-		if (!IniFile.value(GUIConstants.TOP_BLUE).isEmpty()) {
-			blue = Integer.parseInt(IniFile.value(GUIConstants.TOP_BLUE));
-		}
-		topColor = new Color(red, green, blue);
+		choice.setSelectedIndex(0);
 	}
 
-	private void initializeBottomColor() {
-		int red = GUIConstants.DEFAULT_BOTTOM_COLOR.getRed();
-		int green = GUIConstants.DEFAULT_BOTTOM_COLOR.getGreen();
-		int blue = GUIConstants.DEFAULT_BOTTOM_COLOR.getBlue();
-		if (!IniFile.value(GUIConstants.BOTTOM_RED).isEmpty()) {
-			red = Integer.parseInt(IniFile.value(GUIConstants.BOTTOM_RED));
+	private Color getSelectedColor(JComboBox<String> choice) {
+		Color result = null;
+		if (choice.getSelectedItem().equals("default")) {
+			result = defaultColor;
+		} else {
+			result = ColorProvider.get((String) choice.getSelectedItem());
 		}
-		if (!IniFile.value(GUIConstants.BOTTOM_GREEN).isEmpty()) {
-			green = Integer.parseInt(IniFile.value(GUIConstants.BOTTOM_GREEN));
-		}
-		if (!IniFile.value(GUIConstants.BOTTOM_BLUE).isEmpty()) {
-			blue = Integer.parseInt(IniFile.value(GUIConstants.BOTTOM_BLUE));
-		}
-		bottomColor = new Color(red, green, blue);
+		return result;
 	}
 
 }
