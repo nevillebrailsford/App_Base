@@ -21,6 +21,7 @@ import application.definition.ApplicationConfiguration;
 import application.definition.ApplicationDefinition;
 import application.definition.BaseConstants;
 import application.inifile.IniFile;
+import application.locking.LockManager;
 import application.logging.LogConfigurer;
 import application.notification.NotificationCentre;
 import application.notification.NotificationListener;
@@ -136,6 +137,13 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 			System.exit(0);
 		}
 		configureApplication(parameters);
+		if (!LockManager.lock()) {
+			System.out
+					.println("Another instance of " + ApplicationConfiguration.applicationDefinition().applicationName()
+							+ " is running. This instance is stopping.");
+			System.exit(0);
+		}
+		addShutDownHook();
 		configureLogging();
 		configureStoreDetails();
 		LOGGER = ApplicationConfiguration.logger();
@@ -151,6 +159,16 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		setLookAndFeel();
 		loadModelAndWait(storeDetails);
 		NotificationCentre.removeListener(listener);
+	}
+
+	private final void addShutDownHook() {
+		Runnable runner = new Runnable() {
+			@Override
+			public void run() {
+				LockManager.unlock();
+			}
+		};
+		Runtime.getRuntime().addShutdownHook(new Thread(runner, "Application Hook"));
 	}
 
 	public void setLookAndFeel() {
