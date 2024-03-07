@@ -44,6 +44,24 @@ public abstract class GApplication {
 	public static final int HSB = 29;
 	public static final int CORNER = 30;
 
+	public static final float PI = 3.14159265358979323846f;
+	public static final float HALF_PI = 1.57079632679489661923f;
+	public static final float QUARTER_PI = 0.7853982f;
+	public static final float TWO_PI = 6.28318530717958647693f;
+	public static final float TAU = TWO_PI;
+
+	public static final int POINT = 100;
+	public static final int LINE = 101;
+	public static final int TRIANGLE = 102;
+	public static final int QUAD = 103;
+	public static final int RECT = 104;
+	public static final int ELLIPSE = 105;
+	public static final int ARC = 106;
+	public static final int BOX = 107;
+	public static final int SPHERE = 108;
+	public static final int GROUP = 109;
+	public static final int TRIANGLE_STRIP = 110;
+
 	public Graphics2D graphicContext = null;
 
 	public float width = 480;
@@ -65,17 +83,17 @@ public abstract class GApplication {
 	private Stack<Matrix> matrixStack;
 	private Matrix matrix;
 
-	private Paint backgroundColor = Color.lightGray;
-	private float strokeWeight = 1;
-	private Paint strokeColor = Color.BLACK;
-	private Paint fillColor = Color.WHITE;
-	private int textSize = 20;
-	private Font textFont = new Font(Font.SERIF, Font.PLAIN, textSize);
-	private int colorMode = RGB;
-	private int rectMode = CORNER;
-	private int ellipseMode = CORNER;
-	private int textAlignX = LEFT;
-	private int textAlignY = BOTTOM;
+	protected Paint backgroundColor = Color.lightGray;
+	protected float strokeWeight = 1;
+	protected Paint strokeColor = Color.BLACK;
+	protected Paint fillColor = Color.WHITE;
+	protected int textSize = 20;
+	protected Font textFont = new Font(Font.SERIF, Font.PLAIN, textSize);
+	protected int colorMode = RGB;
+	protected int rectMode = CORNER;
+	protected int ellipseMode = CORNER;
+	protected int textAlignX = LEFT;
+	protected int textAlignY = BOTTOM;
 
 	protected boolean noStroke = false;
 	protected boolean noFill = false;
@@ -90,6 +108,12 @@ public abstract class GApplication {
 
 	Timer timer = null;
 	long timerTimer = 0;
+
+	private static GApplication app = null;
+
+	public static GApplication app() {
+		return app;
+	}
 
 	public static int toInt(float value) {
 		return (int) value;
@@ -137,6 +161,7 @@ public abstract class GApplication {
 	}
 
 	public GApplication() {
+		app = this;
 		frame = new JFrame();
 		frame.setLocationRelativeTo(null);
 		new Thread(() -> {
@@ -195,7 +220,7 @@ public abstract class GApplication {
 		graphicContext.fillRect(0, 0, (int) width, (int) height);
 	}
 
-	private void primeShape(GShape shape) {
+	private void primeShape(GAppShape shape) {
 		shape.strokeColor = strokeColor;
 		shape.fillColor = fillColor;
 		shape.noStroke = noStroke;
@@ -207,12 +232,12 @@ public abstract class GApplication {
 	}
 
 	private void showShape(Shape shape) {
-		GShape gShape = new GShape(shape);
+		GAppShape gShape = new GAppShape(shape);
 		primeShape(gShape);
 		drawGShape(gShape);
 	}
 
-	private void drawGShape(GShape shape) {
+	private void drawGShape(GAppShape shape) {
 		AffineTransform saveXform = graphicContext.getTransform();
 		AffineTransform toNewLoc = new AffineTransform();
 		toNewLoc.concatenate(shape.transform);
@@ -250,7 +275,14 @@ public abstract class GApplication {
 	public void mousePressed() {
 	}
 
+	public void mouseReleased() {
+
+	}
+
 	public void mouseDragged() {
+	}
+
+	public void mouseMoved() {
 	}
 
 	public void mouseClicked() {
@@ -601,6 +633,13 @@ public abstract class GApplication {
 	}
 
 // Shapes
+	public GShape createShape(int type, float[] args) {
+		return new GShape(type, args);
+	}
+
+	public void shape(GShape shape, float x, float y) {
+	}
+
 	public void point(float x, float y) {
 		Rectangle2D.Float point = new Rectangle2D.Float(x, y, strokeWeight, strokeWeight);
 		showShape(point);
@@ -612,7 +651,11 @@ public abstract class GApplication {
 	}
 
 	public void arc(float x, float y, float w, float h, float start, float extent) {
-		Arc2D.Float arc = new Arc2D.Float(x - (w / 2), y - (h / 2), w, h, start, extent, Arc2D.OPEN);
+		if (ellipseMode == CENTER) {
+			x -= w / 2;
+			y -= h / 2;
+		}
+		Arc2D.Float arc = new Arc2D.Float(x, y, w, h, start, extent, Arc2D.OPEN);
 		showShape(arc);
 	}
 

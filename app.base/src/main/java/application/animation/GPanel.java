@@ -25,6 +25,11 @@ public class GPanel extends JPanel {
 				application.mouseDragged();
 			}
 
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				application.mouseMoved();
+			}
+
 		});
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -45,6 +50,7 @@ public class GPanel extends JPanel {
 				application.mousePressed = false;
 				application.mouseButton = 0;
 				application.mouseClicked();
+				application.mouseReleased();
 			}
 
 			@Override
