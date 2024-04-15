@@ -1,16 +1,13 @@
 package application.animation;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.Toolkit;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,12 +17,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.time.LocalDateTime;
 import java.util.Stack;
-import java.util.StringTokenizer;
 import java.util.TimerTask;
 
 import javax.swing.JFrame;
@@ -34,7 +28,7 @@ import javax.swing.Timer;
 
 import application.timer.TimerService;
 
-public abstract class GApplication {
+public abstract class GApplication extends GApplicationDate {
 	public static final int TOP = 23;
 	public static final int BOTTOM = 24;
 	public static final int LEFT = 25;
@@ -43,12 +37,6 @@ public abstract class GApplication {
 	public static final int RGB = 28;
 	public static final int HSB = 29;
 	public static final int CORNER = 30;
-
-	public static final float PI = 3.14159265358979323846f;
-	public static final float HALF_PI = 1.57079632679489661923f;
-	public static final float QUARTER_PI = 0.7853982f;
-	public static final float TWO_PI = 6.28318530717958647693f;
-	public static final float TAU = TWO_PI;
 
 	public static final int POINT = 100;
 	public static final int LINE = 101;
@@ -61,8 +49,6 @@ public abstract class GApplication {
 	public static final int SPHERE = 108;
 	public static final int GROUP = 109;
 	public static final int TRIANGLE_STRIP = 110;
-
-	public Graphics2D graphicContext = null;
 
 	public float width = 480;
 	public float height = 360;
@@ -79,14 +65,7 @@ public abstract class GApplication {
 	private int frameInterval = 16; // interval in milliseconds per refresh. Default is approx. 60 frames per second
 	private JFrame frame;
 	private GPanel canvas;
-	private long startTime;
-	private Stack<Matrix> matrixStack;
-	private Matrix matrix;
 
-	protected Paint backgroundColor = Color.lightGray;
-	protected float strokeWeight = 1;
-	protected Paint strokeColor = Color.BLACK;
-	protected Paint fillColor = Color.WHITE;
 	protected int textSize = 20;
 	protected Font textFont = new Font(Font.SERIF, Font.PLAIN, textSize);
 	protected int colorMode = RGB;
@@ -94,9 +73,6 @@ public abstract class GApplication {
 	protected int ellipseMode = CORNER;
 	protected int textAlignX = LEFT;
 	protected int textAlignY = BOTTOM;
-
-	protected boolean noStroke = false;
-	protected boolean noFill = false;
 
 	private boolean inSetup = false;
 	private boolean inDraw = false;
@@ -113,14 +89,6 @@ public abstract class GApplication {
 
 	public static GApplication app() {
 		return app;
-	}
-
-	public static int toInt(float value) {
-		return (int) value;
-	}
-
-	public static int toInt(long value) {
-		return (int) value;
 	}
 
 	public void start() {
@@ -218,40 +186,6 @@ public abstract class GApplication {
 	private void internalBackground() {
 		graphicContext.setColor((Color) backgroundColor);
 		graphicContext.fillRect(0, 0, (int) width, (int) height);
-	}
-
-	private void primeShape(GAppShape shape) {
-		shape.strokeColor = strokeColor;
-		shape.fillColor = fillColor;
-		shape.noStroke = noStroke;
-		shape.noFill = noFill;
-		AffineTransform transform = new AffineTransform();
-		transform.translate(matrix.translateY, matrix.translateY);
-		shape.transform = transform;
-		shape.stroke = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
-	}
-
-	private void showShape(Shape shape) {
-		GAppShape gShape = new GAppShape(shape);
-		primeShape(gShape);
-		drawGShape(gShape);
-	}
-
-	private void drawGShape(GAppShape shape) {
-		AffineTransform saveXform = graphicContext.getTransform();
-		AffineTransform toNewLoc = new AffineTransform();
-		toNewLoc.concatenate(shape.transform);
-		graphicContext.transform(toNewLoc);
-		graphicContext.setStroke(shape.stroke);
-		if (!shape.noFill) {
-			graphicContext.setColor((Color) shape.fillColor);
-			graphicContext.fill(shape.shape);
-		}
-		if (!shape.noStroke) {
-			graphicContext.setColor((Color) shape.strokeColor);
-			graphicContext.draw(shape.shape);
-		}
-		graphicContext.setTransform(saveXform);
 	}
 
 	private void resetDefaults() {
@@ -364,6 +298,24 @@ public abstract class GApplication {
 		matrix = matrixStack.pop();
 	}
 
+	public void stroke(float mono) {
+		stroke(mono, mono, mono);
+	}
+
+	public void stroke(float red, float green, float blue) {
+		stroke(red, green, blue, 1.0F);
+	}
+
+	public void stroke(float v1, float v2, float v3, float opacity) {
+		if (colorMode == RGB) {
+			int red = toInt(Math.min(255, v1));
+			int green = toInt(Math.min(255, v2));
+			int blue = toInt(Math.min(255, v3));
+			int alpha = (int) map(opacity, 0.0F, 1.0F, 0.0F, 255.0F);
+			stroke(new Color(red, green, blue, alpha));
+		}
+	}
+
 	public void stroke(Paint color) {
 		strokeColor = color;
 		noStroke = false;
@@ -377,10 +329,6 @@ public abstract class GApplication {
 		fill(mono, mono, mono, opacity);
 	}
 
-	public void fill(float red, float green, float blue) {
-		fill(red, green, blue, 1.0F);
-	}
-
 	public void fill(float v1, float v2, float v3, float opacity) {
 		if (colorMode == RGB) {
 			int red = toInt(Math.min(255, v1));
@@ -389,6 +337,10 @@ public abstract class GApplication {
 			int alpha = (int) map(opacity, 0.0F, 1.0F, 0.0F, 255.0F);
 			fill(new Color(red, green, blue, alpha));
 		}
+	}
+
+	public void fill(float red, float green, float blue) {
+		fill(red, green, blue, 1.0F);
 	}
 
 	public void fill(Paint color) {
@@ -412,226 +364,6 @@ public abstract class GApplication {
 		rectMode = mode;
 	}
 
-	// Date and Time
-
-	public int year() {
-		return LocalDateTime.now().getYear();
-	}
-
-	public int month() {
-		return LocalDateTime.now().getMonthValue();
-	}
-
-	public int day() {
-		return LocalDateTime.now().getDayOfMonth();
-	}
-
-	public int hour() {
-		return LocalDateTime.now().getHour();
-	}
-
-	public int minute() {
-		return LocalDateTime.now().getMinute();
-	}
-
-	public int second() {
-		return LocalDateTime.now().getSecond();
-	}
-
-	public int millis() {
-		return toInt((startTime - System.currentTimeMillis()));
-	}
-
-// Mathematical functions
-
-	public float sq(float n) {
-		return n * n;
-	}
-
-	public float sqrt(float n) {
-		return (float) Math.sqrt(n);
-	}
-
-	public float abs(float value) {
-		return Math.abs(value);
-	}
-
-	public float ceil(float value) {
-		return (float) Math.ceil(value);
-	}
-
-	public float dist(float x1, float y1, float x2, float y2) {
-		return sqrt(sq(x2 - x1) + sq(y2 - y1));
-	}
-
-	public float dist(float x1, float y1, float z1, float x2, float y2, float z2) {
-		return sqrt(sq(x2 - x1) + sq(y2 - y1) + sq(z2 - z1));
-	}
-
-	public float radian(float degrees) {
-		return (float) Math.toRadians(degrees);
-	}
-
-	public float radiansToDegrees(float radians) {
-		return (float) Math.toDegrees(radians);
-	}
-
-// String functions
-
-	public String join(String[] list, String separator) {
-		StringBuilder builder = new StringBuilder();
-		boolean first = true;
-		for (String s : list) {
-			if (!first) {
-				builder.append(separator);
-			}
-			first = false;
-			builder.append(s);
-		}
-		return builder.toString();
-	}
-
-	public String[] split(String value, char delim) {
-		return split(value, String.valueOf(delim));
-	}
-
-	public String[] split(String value, String delim) {
-		StringTokenizer st = new StringTokenizer(value, delim);
-		int size = st.countTokens();
-		String[] result = new String[size];
-		for (int i = 0; i < size; i++) {
-			result[i] = st.nextToken();
-		}
-		return result;
-	}
-
-	public String[] splitTokens(String value) {
-		return splitTokens(value, "\t\n\r\f ");
-	}
-
-	private String[] splitTokens(String value, char delim) {
-		return split(value, delim);
-	}
-
-	public String[] splitTokens(String value, String delim) {
-		String[] result = splitTokens(value, delim.charAt(0));
-		for (int i = 1; i < delim.length(); i++) {
-			result = splitTokens(result, delim.charAt(i));
-		}
-		return result;
-	}
-
-	private String[] splitTokens(String[] values, char delim) {
-		int size = 0;
-		for (int i = 0; i < values.length; i++) {
-			String[] arr = split(values[i], delim);
-			size += arr.length;
-		}
-		String[] result = new String[size];
-		int index = 0;
-		for (int i = 0; i < values.length; i++) {
-			String[] arr = split(values[i], delim);
-			for (int j = 0; j < arr.length; j++) {
-				result[index++] = arr[j];
-			}
-		}
-		return result;
-	}
-
-	public String trim(String str) {
-		return str.trim();
-	}
-
-	public String[] trim(String[] array) {
-		String[] result = new String[array.length];
-		for (int i = 0; i < array.length; i++) {
-			result[i] = trim(array[i]);
-		}
-		return result;
-	}
-
-	public String nf(int num) {
-		return String.format("%0d", num);
-	}
-
-	public String nf(int num, int digits) {
-		String formatter = null;
-		if (digits == 0) {
-			formatter = "%d";
-		} else {
-			formatter = "%0" + Integer.toString(digits) + "d";
-		}
-		return String.format(formatter, num);
-	}
-
-	public String[] nf(int[] nums) {
-		String[] result = new String[nums.length];
-		for (int i = 0; i < nums.length; i++) {
-			result[i] = nf(nums[i]);
-		}
-		return result;
-	}
-
-	public String[] nf(int[] nums, int digits) {
-		String[] result = new String[nums.length];
-		for (int i = 0; i < nums.length; i++) {
-			result[i] = nf(nums[i], digits);
-		}
-		return result;
-	}
-
-	public String nf(float num) {
-		return String.format("%0f", num);
-	}
-
-	public String nf(float num, int digits) {
-		String formatter = "%0" + Integer.toString(digits) + "f";
-		return String.format(formatter, num);
-	}
-
-	public String nf(float num, int left, int right) {
-		String formatter = "%0" + Integer.toString(left + right + 1) + "." + Integer.toString(right) + "f";
-		return String.format(formatter, num);
-	}
-
-	public String[] nf(float[] nums) {
-		String[] result = new String[nums.length];
-		for (int i = 0; i < nums.length; i++) {
-			result[i] = nf(nums[i]);
-		}
-		return result;
-	}
-
-	public String[] nf(float[] nums, int digits) {
-		String[] result = new String[nums.length];
-		for (int i = 0; i < nums.length; i++) {
-			result[i] = nf(nums[i], digits);
-		}
-		return result;
-	}
-
-	public String[] nf(float[] nums, int left, int right) {
-		String[] result = new String[nums.length];
-		for (int i = 0; i < nums.length; i++) {
-			result[i] = nf(nums[i], left, right);
-		}
-		return result;
-	}
-
-// Environmental functions 
-
-	public float screenResolution() {
-		return Toolkit.getDefaultToolkit().getScreenResolution();
-	}
-
-	public float screenWidth() {
-		return Toolkit.getDefaultToolkit().getScreenSize().width;
-	}
-
-	public float screenHeight() {
-		return Toolkit.getDefaultToolkit().getScreenSize().height;
-	}
-
 // Shapes
 	public GShape createShape(int type, float[] args) {
 		return new GShape(type, args);
@@ -643,11 +375,6 @@ public abstract class GApplication {
 	public void point(float x, float y) {
 		Rectangle2D.Float point = new Rectangle2D.Float(x, y, strokeWeight, strokeWeight);
 		showShape(point);
-	}
-
-	public void line(float x1, float y1, float x2, float y2) {
-		Line2D.Float line = new Line2D.Float(x1, y1, x2, y2);
-		showShape(line);
 	}
 
 	public void arc(float x, float y, float w, float h, float start, float extent) {
@@ -854,10 +581,6 @@ public abstract class GApplication {
 		}
 	}
 
-	public static float map(float value, float start1, float stop1, float start2, float stop2) {
-		return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-	}
-
 	public String hex(int value, int digits) {
 		String stuff = Integer.toHexString(value).toUpperCase();
 		if (digits > 8) {
@@ -876,14 +599,6 @@ public abstract class GApplication {
 
 	public int unhex(String value) {
 		return toInt((Long.parseLong(value, 16)));
-	}
-
-	public float sin(float angle) {
-		return (float) Math.sin(radian(angle));
-	}
-
-	public float cos(float angle) {
-		return (float) Math.cos(radian(angle));
 	}
 
 // Color manipulation
@@ -1003,8 +718,4 @@ public abstract class GApplication {
 		}
 	}
 
-	private class Matrix {
-		private float translateX;
-		private float translateY;
-	}
 }
