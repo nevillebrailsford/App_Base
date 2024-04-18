@@ -33,6 +33,23 @@ public abstract class GApplicationGraphic extends GApplicationEnvironment {
 		drawGShape(gShape);
 	}
 
+	protected void showShape(GShape gshape) {
+		GAppShape gAppShape = new GAppShape(gshape.shape);
+		primeShape(gAppShape, gshape);
+		drawGShape(gAppShape);
+	}
+
+	protected void primeShape(GAppShape gAppShape, GShape gshape) {
+		gAppShape.strokeColor = gshape.strokeColor;
+		gAppShape.fillColor = gshape.fillColor;
+		gAppShape.noStroke = gshape.noStroke;
+		gAppShape.noFill = gshape.noFill;
+		AffineTransform transform = new AffineTransform();
+		transform.translate(matrix.translateX, matrix.translateY);
+		gAppShape.transform = transform;
+		gAppShape.stroke = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+	}
+
 	private void drawGShape(GAppShape shape) {
 		AffineTransform saveXform = graphicContext.getTransform();
 		AffineTransform toNewLoc = new AffineTransform();
@@ -56,7 +73,7 @@ public abstract class GApplicationGraphic extends GApplicationEnvironment {
 		shape.noStroke = noStroke;
 		shape.noFill = noFill;
 		AffineTransform transform = new AffineTransform();
-		transform.translate(matrix.translateY, matrix.translateY);
+		transform.translate(matrix.translateX, matrix.translateY);
 		shape.transform = transform;
 		shape.stroke = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
 	}

@@ -365,11 +365,24 @@ public abstract class GApplication extends GApplicationDate {
 	}
 
 // Shapes
-	public GShape createShape(int type, float[] args) {
+	public GShape createShape() {
+		return new GShape();
+	}
+
+	public GShape createShape(int type) {
+		return new GShape(type);
+	}
+
+	public GShape createShape(int type, float... args) {
 		return new GShape(type, args);
 	}
 
-	public void shape(GShape shape, float x, float y) {
+	public void shape(GShape shape) {
+		shape.draw();
+	}
+
+	public void shape(GShape shape, int x, int y) {
+		shape.draw(x, y);
 	}
 
 	public void point(float x, float y) {
