@@ -2,7 +2,7 @@ package application.animation;
 
 import java.util.Random;
 
-public abstract class GApplicationMaths extends GApplicationGraphic {
+public abstract class GApplicationMaths extends GApplicationText {
 	public static final float PI = 3.14159265358979323846f;
 	public static final float HALF_PI = 1.57079632679489661923f;
 	public static final float QUARTER_PI = 0.7853982f;

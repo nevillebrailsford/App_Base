@@ -7,17 +7,12 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 import java.util.TimerTask;
@@ -29,27 +24,6 @@ import javax.swing.Timer;
 import application.timer.TimerService;
 
 public abstract class GApplication extends GApplicationDate {
-	public static final int TOP = 23;
-	public static final int BOTTOM = 24;
-	public static final int LEFT = 25;
-	public static final int CENTER = 26;
-	public static final int RIGHT = 27;
-	public static final int RGB = 28;
-	public static final int HSB = 29;
-	public static final int CORNER = 30;
-
-	public static final int POINT = 100;
-	public static final int LINE = 101;
-	public static final int TRIANGLE = 102;
-	public static final int QUAD = 103;
-	public static final int RECT = 104;
-	public static final int ELLIPSE = 105;
-	public static final int ARC = 106;
-	public static final int BOX = 107;
-	public static final int SPHERE = 108;
-	public static final int GROUP = 109;
-	public static final int TRIANGLE_STRIP = 110;
-
 	public float width = 480;
 	public float height = 360;
 	public float mouseX = 120;
@@ -66,13 +40,9 @@ public abstract class GApplication extends GApplicationDate {
 	private JFrame frame;
 	private GPanel canvas;
 
-	protected int textSize = 20;
-	protected Font textFont = new Font(Font.SERIF, Font.PLAIN, textSize);
 	protected int colorMode = RGB;
 	protected int rectMode = CORNER;
 	protected int ellipseMode = CORNER;
-	protected int textAlignX = LEFT;
-	protected int textAlignY = BOTTOM;
 
 	private boolean inSetup = false;
 	private boolean inDraw = false;
@@ -365,6 +335,7 @@ public abstract class GApplication extends GApplicationDate {
 	}
 
 // Shapes
+
 	public GShape createShape() {
 		return new GShape();
 	}
@@ -383,65 +354,6 @@ public abstract class GApplication extends GApplicationDate {
 
 	public void shape(GShape shape, int x, int y) {
 		shape.draw(x, y);
-	}
-
-	public void point(float x, float y) {
-		Rectangle2D.Float point = new Rectangle2D.Float(x, y, strokeWeight, strokeWeight);
-		showShape(point);
-	}
-
-	public void arc(float x, float y, float w, float h, float start, float extent) {
-		if (ellipseMode == CENTER) {
-			x -= w / 2;
-			y -= h / 2;
-		}
-		Arc2D.Float arc = new Arc2D.Float(x, y, w, h, start, extent, Arc2D.OPEN);
-		showShape(arc);
-	}
-
-	public void ellipse(float x, float y, float w, float h) {
-		if (ellipseMode == CENTER) {
-			x -= w / 2;
-			y -= h / 2;
-		}
-		Ellipse2D.Float oval = new Ellipse2D.Float(x, y, w, h);
-		showShape(oval);
-	}
-
-	public void circle(float x, float y, float w) {
-		ellipse(x, y, w, w);
-	}
-
-	public void rect(float x, float y, float w, float h) {
-		if (rectMode == CENTER) {
-			x -= w / 2;
-			y -= h / 2;
-		}
-		Rectangle2D.Float rect = new Rectangle2D.Float(x, y, w, h);
-		showShape(rect);
-	}
-
-	public void square(float x, float y, float w) {
-		rect(x, y, w, w);
-	}
-
-	public void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-		GeneralPath quad = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-		quad.moveTo(x1, y1);
-		quad.lineTo(x2, y2);
-		quad.lineTo(x3, y3);
-		quad.lineTo(x4, y4);
-		quad.closePath();
-		showShape(quad);
-	}
-
-	public void triangle(float x1, float y1, float x2, float y2, float x3, float y3) {
-		GeneralPath quad = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-		quad.moveTo(x1, y1);
-		quad.lineTo(x2, y2);
-		quad.lineTo(x3, y3);
-		quad.closePath();
-		showShape(quad);
 	}
 
 	// Text
@@ -471,36 +383,6 @@ public abstract class GApplication extends GApplicationDate {
 		TextLayout textTl = new TextLayout("X", textFont, new FontRenderContext(null, false, false));
 		float height = (float) textTl.getBounds().getHeight();
 		return height;
-	}
-
-	public void text(char c, double x, double y) {
-		text(String.valueOf(c), x, y);
-	}
-
-	public void text(char[] c, double x, double y) {
-		text(String.valueOf(c), x, y);
-	}
-
-	public void text(String word, double x, double y) {
-		TextLayout textTl = new TextLayout(word, textFont, new FontRenderContext(null, false, false));
-		AffineTransform textAt = new AffineTransform();
-		float xTranslate = (float) x;
-		float yTranslate = (float) y;
-		if (textAlignX == CENTER) {
-			xTranslate -= textTl.getBounds().getWidth() / 2;
-		}
-		if (textAlignX == RIGHT) {
-			xTranslate -= textTl.getBounds().getWidth();
-		}
-		if (textAlignY == CENTER) {
-			yTranslate += textTl.getBounds().getHeight() / 2;
-		}
-		if (textAlignY == BOTTOM) {
-			yTranslate += textTl.getBounds().getHeight();
-		}
-		textAt.translate(xTranslate, yTranslate);
-		Shape shape = textTl.getOutline(textAt);
-		showShape(shape);
 	}
 
 	public void textFont(Font font) {
