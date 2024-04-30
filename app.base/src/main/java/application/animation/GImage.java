@@ -2,9 +2,16 @@ package application.animation;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 
 public class GImage {
 	public int[] pixels = null;
@@ -13,6 +20,54 @@ public class GImage {
 	protected BufferedImage image = null;
 
 	private GImage() {
+	}
+
+	public GImage(File fileName) {
+		try {
+			image = ImageIO.read(fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		width = (float) image.getWidth();
+		height = (float) image.getHeight();
+	}
+
+	public GImage(File fileName, float width, float height, boolean preserveRatio) {
+		try {
+			Metadata metadata = null;
+			try {
+				metadata = ImageMetadataReader.readMetadata(fileName);
+			} catch (ImageProcessingException e) {
+				e.printStackTrace();
+
+			}
+			String orientation = "";
+			for (Directory directory : metadata.getDirectories()) {
+				for (Tag tag : directory.getTags()) {
+					if (tag.getTagName().equals("Orientation")) {
+						orientation = tag.getDescription();
+					}
+				}
+			}
+			BufferedImage im = ImageIO.read(fileName);
+			image = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = image.createGraphics();
+			if (orientation.toLowerCase().contains("rotate")) {
+				int x = image.getWidth() / 2;
+				int y = image.getHeight() / 2;
+				g.rotate(Math.toRadians(90), x, y);
+			}
+			g.drawImage(im, 0, 0, (int) width, (int) height, null);
+			g.dispose();
+		} catch (
+
+		IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		this.width = (float) image.getWidth();
+		this.height = (float) image.getHeight();
 	}
 
 	public GImage(String imageName) {

@@ -14,6 +14,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Stack;
 import java.util.TimerTask;
 
@@ -116,6 +117,7 @@ public abstract class GApplication extends GApplicationDate {
 			TimerService.instance().stop(myTimer);
 			myTimer = -1;
 		}
+		noLoop();
 	}
 
 	private void startDrawing() {
@@ -252,7 +254,11 @@ public abstract class GApplication extends GApplicationDate {
 	}
 
 	public void frames(int frames) {
-		this.frameInterval = frames;
+		if (frames == 0) {
+			this.frameInterval = 0;
+		} else {
+			this.frameInterval = 1000 / frames;
+		}
 		startDrawing();
 	}
 
@@ -593,6 +599,16 @@ public abstract class GApplication extends GApplicationDate {
 
 	public GImage loadImage(String name) {
 		GImage image = new GImage(name);
+		return image;
+	}
+
+	public GImage loadImage(File fileName) {
+		GImage image = new GImage(fileName);
+		return image;
+	}
+
+	public GImage loadImage(File fileName, float width, float height, boolean preserveRatio) {
+		GImage image = new GImage(fileName, width, height, preserveRatio);
 		return image;
 	}
 
