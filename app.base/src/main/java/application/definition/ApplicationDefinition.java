@@ -7,8 +7,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Enumeration;
 import java.util.Optional;
 import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
@@ -51,11 +53,12 @@ public class ApplicationDefinition {
 	public static Optional<String> getFromManifest(String key, Class<?> caller) throws Exception {
 		String result = null;
 		try {
-			String clasname = caller.getSimpleName() + ".class";
-			String classPath = caller.getResource(clasname).toString();
-			if (classPath.startsWith("jar")) {
-				String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
-				Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+			Enumeration<URL> resEnum = Thread.currentThread().getContextClassLoader()
+					.getResources(JarFile.MANIFEST_NAME);
+			URL thisURL = null;
+			if (resEnum.hasMoreElements()) {
+				thisURL = resEnum.nextElement();
+				Manifest manifest = new Manifest(thisURL.openStream());
 				Attributes attr = manifest.getMainAttributes();
 				result = attr.getValue(key);
 			}
@@ -86,6 +89,26 @@ public class ApplicationDefinition {
 	 * @return version
 	 */
 	public String version() {
+		String result = "";
+		try {
+			result = getFromManifest("Application-Version").orElse("Could not be determined");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public String buildDate() {
+		String result = "";
+		try {
+			result = getFromManifest("Build-Date").orElse("Could not be determined");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public String buildNumber() {
 		String result = "";
 		try {
 			result = getFromManifest("Build-Number").orElse("Could not be determined");

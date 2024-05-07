@@ -56,9 +56,12 @@ public class GImage {
 			if (orientation.toLowerCase().contains("rotate")) {
 				int x = image.getWidth() / 2;
 				int y = image.getHeight() / 2;
+				g.scale(height / width, height / width);
 				g.rotate(Math.toRadians(90), x, y);
+				g.drawImage(im, 0, 0, (int) width, (int) height, null);
+			} else {
+				g.drawImage(im, 0, 0, (int) width, (int) height, null);
 			}
-			g.drawImage(im, 0, 0, (int) width, (int) height, null);
 			g.dispose();
 		} catch (
 

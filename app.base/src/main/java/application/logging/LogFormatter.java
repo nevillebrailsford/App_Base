@@ -61,6 +61,8 @@ public class LogFormatter extends Formatter {
 		builder.append("************ Start Display Current Environment ************").append(lineEnd);
 		builder.append("applicationDefinition: ").append(applicationDefinition.applicationName()).append(lineEnd);
 		builder.append("version: ").append(applicationDefinition.version()).append(lineEnd);
+		builder.append("build.date: ").append(applicationDefinition.buildDate()).append(lineEnd);
+		builder.append("build.number: ").append(applicationDefinition.buildNumber()).append(lineEnd);
 		builder.append("os.name: ").append(System.getProperty("os.name")).append(lineEnd);
 		builder.append("java.version: ").append(System.getProperty("java.version")).append(lineEnd);
 		builder.append("java.home: ").append(System.getProperty("java.home")).append(lineEnd);
