@@ -1,5 +1,6 @@
 package application.animation;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -40,7 +41,6 @@ public class GImage {
 				metadata = ImageMetadataReader.readMetadata(fileName);
 			} catch (ImageProcessingException e) {
 				e.printStackTrace();
-
 			}
 			String orientation = "";
 			for (Directory directory : metadata.getDirectories()) {
@@ -54,9 +54,17 @@ public class GImage {
 			image = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = image.createGraphics();
 			if (orientation.toLowerCase().contains("rotate")) {
-				int x = image.getWidth() / 2;
-				int y = image.getHeight() / 2;
-				g.scale(height / width, height / width);
+				g.setPaint(Color.black);
+				g.fillRect(0, 0, (int) width, (int) height);
+				float x = width / 2;
+				float y = height / 2;
+				float scale = height / width;
+				float newWidth = width * scale;
+				float newHeight = height * scale;
+				float xTranslate = (width - (newWidth)) / 2;
+				float yTranslate = (height - (newHeight)) / 2;
+				g.translate(xTranslate, yTranslate);
+				g.scale(scale, scale);
 				g.rotate(Math.toRadians(90), x, y);
 				g.drawImage(im, 0, 0, (int) width, (int) height, null);
 			} else {
