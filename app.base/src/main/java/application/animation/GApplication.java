@@ -62,6 +62,10 @@ public abstract class GApplication extends GApplicationDate {
 		return app;
 	}
 
+	public JFrame frame() {
+		return frame;
+	}
+
 	public void start() {
 		frameRate = 60;
 		renderingHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
