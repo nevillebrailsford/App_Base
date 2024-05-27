@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,6 +62,8 @@ public class PreferencesDialog extends JDialog {
 	private JComboBox<String> bottomColourChoice;
 
 	private static final Color defaultColor = new Color(214, 227, 223);
+
+	private int currentRow = 0;
 
 	/**
 	 * Launch the application.
@@ -163,6 +166,7 @@ public class PreferencesDialog extends JDialog {
 			bottomColorPreview.setOpaque(true);
 			contentPanel.add(bottomColorPreview, "6, 12");
 		}
+		currentRow = 12;
 		{
 			JPanel buttonPane = new BottomColoredPanel();
 //			JPanel buttonPane = new JPanel();
@@ -296,6 +300,25 @@ public class PreferencesDialog extends JDialog {
 			result = ColorProvider.get((String) choice.getSelectedItem());
 		}
 		return result;
+	}
+
+	public void addRow(JLabel left, JComponent middle, JComponent right) {
+		currentRow += 2;
+		int col = 2;
+		if (left != null) {
+			String constraint = "" + col + "," + currentRow + ", right, default";
+			contentPanel.add(left, constraint);
+		}
+		col = 4;
+		if (middle != null) {
+			String constraint = "" + col + "," + currentRow + ", fill, default";
+			contentPanel.add(middle, constraint);
+		}
+		col = 6;
+		if (right != null) {
+			String constraint = "" + col + "," + currentRow;
+			contentPanel.add(monitorNotifications, constraint);
+		}
 	}
 
 }
