@@ -138,9 +138,10 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		}
 		configureApplication(parameters);
 		if (!LockManager.lock()) {
-			System.out
-					.println("Another instance of " + ApplicationConfiguration.applicationDefinition().applicationName()
-							+ " is running. This instance is stopping.");
+			String message = "Another instance of " + ApplicationConfiguration.applicationDefinition().applicationName()
+					+ " is running. This instance is stopping.";
+			System.out.println(message);
+			JOptionPane.showMessageDialog(null, message);
 			System.exit(0);
 		}
 		addShutDownHook();
@@ -157,7 +158,9 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		}
 		NotificationCentre.addListener(listener);
 		setLookAndFeel();
-		loadModelAndWait(storeDetails);
+		if (ApplicationConfiguration.applicationDefinition().hasModelFile()) {
+			loadModelAndWait(storeDetails);
+		}
 		NotificationCentre.removeListener(listener);
 	}
 

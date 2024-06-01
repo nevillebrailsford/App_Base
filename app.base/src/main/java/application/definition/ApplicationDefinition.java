@@ -98,6 +98,11 @@ public class ApplicationDefinition {
 		return result;
 	}
 
+	/**
+	 * This is the build date for the application.
+	 * 
+	 * @return
+	 */
 	public String buildDate() {
 		String result = "";
 		try {
@@ -108,6 +113,11 @@ public class ApplicationDefinition {
 		return result;
 	}
 
+	/**
+	 * This is the build number for the application.
+	 * 
+	 * @return
+	 */
 	public String buildNumber() {
 		String result = "";
 		try {
@@ -118,10 +128,29 @@ public class ApplicationDefinition {
 		return result;
 	}
 
+	/**
+	 * Does the application require a model to be stored in a model file.
+	 * 
+	 * @return
+	 */
+	public boolean hasModelFile() {
+		return true;
+	}
+
+	/**
+	 * The top colour for all panels used by the application.
+	 * 
+	 * @return
+	 */
 	public Optional<Color> topColor() {
 		return Optional.ofNullable((Color) null);
 	}
 
+	/**
+	 * The bottom colour for all panels used by the application.
+	 * 
+	 * @return
+	 */
 	public Optional<Color> bottomColor() {
 		return Optional.ofNullable((Color) null);
 	}
