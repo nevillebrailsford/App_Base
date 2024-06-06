@@ -3,6 +3,7 @@ package application.base.app.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
@@ -15,12 +16,19 @@ public class TopColoredPanel extends JPanel {
 		setOpaque(false);
 	}
 
+	public TopColoredPanel(LayoutManager layout) {
+		super();
+		setLayout(layout);
+	}
+
 	@Override
 	protected void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-		Color top = ApplicationConfiguration.applicationDefinition().topColor().orElse(getBackground());
-		g2d.setPaint(top);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
+		if (ApplicationConfiguration.isDefinitionRegistered()) {
+			Graphics2D g2d = (Graphics2D) g;
+			Color top = ApplicationConfiguration.applicationDefinition().topColor().orElse(getBackground());
+			g2d.setPaint(top);
+			g2d.fillRect(0, 0, getWidth(), getHeight());
+		}
 		super.paintComponent(g);
 	}
 }

@@ -61,6 +61,15 @@ public class ApplicationConfiguration {
 	}
 
 	/**
+	 * Check if application definition has been registered with the configuration.
+	 * 
+	 * @return registered or not
+	 */
+	public synchronized static boolean isDefinitionRegistered() {
+		return registeredApplication != null;
+	}
+
+	/**
 	 * Retrieve the logger to be used by all classes in the application.
 	 * 
 	 * @return logger
