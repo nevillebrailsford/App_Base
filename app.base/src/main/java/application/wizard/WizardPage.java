@@ -4,11 +4,13 @@ import java.awt.LayoutManager;
 
 import application.base.app.gui.ColoredPanel;
 
-public abstract class WizardPage<T> extends ColoredPanel {
+public abstract class WizardPage extends ColoredPanel {
 	private static final long serialVersionUID = 1L;
 
 	/** The owner. */
-	private WizardDialog<T> owner;
+	private WizardDialog owner;
+
+	public Object result = null;
 
 	/**
 	 * Creates a new panel.
@@ -24,7 +26,7 @@ public abstract class WizardPage<T> extends ColoredPanel {
 	 * 
 	 * @return the owner.
 	 */
-	public WizardDialog<T> owner() {
+	public WizardDialog owner() {
 		return this.owner;
 	}
 
@@ -34,7 +36,7 @@ public abstract class WizardPage<T> extends ColoredPanel {
 	 * 
 	 * @param owner the owner.
 	 */
-	public void setOwner(final WizardDialog<T> owner) {
+	public void setOwner(final WizardDialog owner) {
 		this.owner = owner;
 	}
 
@@ -43,9 +45,14 @@ public abstract class WizardPage<T> extends ColoredPanel {
 	 * 
 	 * @return the result.
 	 */
-	public T getResult() {
-		return null;
+	public Object result() {
+		return result;
 	}
+
+	/**
+	 * Tell the current page to save its data.
+	 */
+	public abstract void save();
 
 	/**
 	 * This method is called when the dialog redisplays this panel as a result of
@@ -83,6 +90,6 @@ public abstract class WizardPage<T> extends ColoredPanel {
 	 * 
 	 * @return the next page in the sequence.
 	 */
-	public abstract WizardPage<T> nextPage();
+	public abstract WizardPage nextPage();
 
 }

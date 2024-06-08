@@ -16,35 +16,35 @@ import application.base.app.gui.ColoredPanel;
 /**
  * @param <T>
  */
-public class WizardDialog<T> extends JDialog {
+public class WizardDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	/** The end result of the wizard sequence. */
-	private T result;
+	private Object result;
 
 	/** The current step in the wizard process (starting at step zero). */
 	private int step;
 
 	/** A reference to the current page. */
-	private WizardPage<T> currentPage;
+	public WizardPage currentPage;
 
 	/**
 	 * A list of references to the pages the user has already seen - used for
 	 * navigating through the steps that have already been completed.
 	 */
-	private List<WizardPage<T>> pages;
+	public List<WizardPage> pages;
 
 	/** A handy reference to the "previous" button. */
-	private JButton previousButton;
+	public JButton previousButton;
 
 	/** A handy reference to the "next" button. */
-	private JButton nextButton;
+	public JButton nextButton;
 
 	/** A handy reference to the "finish" button. */
-	private JButton finishButton;
+	public JButton finishButton;
 
 	/** A handy reference to the "help" button. */
-	private JButton helpButton;
+	public JButton helpButton;
 
 	/**
 	 * Standard constructor - builds and returns a new WizardDialog.
@@ -54,7 +54,7 @@ public class WizardDialog<T> extends JDialog {
 	 * @param title     the title.
 	 * @param firstPage the first page.
 	 */
-	public WizardDialog(final JDialog owner, final boolean modal, final String title, final WizardPage<T> firstPage) {
+	public WizardDialog(final JDialog owner, final boolean modal, final String title, final WizardPage firstPage) {
 
 		super(owner, title, modal);
 		initGUI(firstPage);
@@ -64,15 +64,15 @@ public class WizardDialog<T> extends JDialog {
 	 * Standard constructor - builds a new WizardDialog owned by the specified
 	 * JFrame.
 	 * 
-	 * @param owner      the owner.
-	 * @param modal      modal?
-	 * @param title      the title.
-	 * @param firstPanel the first panel.
+	 * @param owner     the owner.
+	 * @param modal     modal?
+	 * @param title     the title.
+	 * @param firstPage the first panel.
 	 */
-	public WizardDialog(final JFrame owner, final boolean modal, final String title, final WizardPage<T> firstPanel) {
+	public WizardDialog(final JFrame owner, final boolean modal, final String title, final WizardPage firstPage) {
 
 		super(owner, title, modal);
-		initGUI(firstPanel);
+		initGUI(firstPage);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class WizardDialog<T> extends JDialog {
 	 * 
 	 * @return the result.
 	 */
-	public T result() {
+	public Object result() {
 		return this.result;
 	}
 
@@ -131,7 +131,7 @@ public class WizardDialog<T> extends JDialog {
 	 * 
 	 * @return the page.
 	 */
-	public WizardPage<T> wizardPage(final int step) {
+	public WizardPage wizardPage(final int step) {
 		if (step < this.pages.size()) {
 			return this.pages.get(step);
 		} else {
@@ -145,7 +145,7 @@ public class WizardDialog<T> extends JDialog {
 	 */
 	public void previous() {
 		if (this.step > 0) {
-			final WizardPage<T> previousPage = wizardPage(this.step - 1);
+			final WizardPage previousPage = wizardPage(this.step - 1);
 			// tell the page that we are returning
 			previousPage.returnFromLaterStep();
 			final Container content = getContentPane();
@@ -165,7 +165,7 @@ public class WizardDialog<T> extends JDialog {
 	 */
 	public void next() {
 
-		WizardPage<T> nextPage = wizardPage(this.step + 1);
+		WizardPage nextPage = wizardPage(this.step + 1);
 		if (nextPage != null) {
 			if (!this.currentPage.canRedisplayNextPage()) {
 				nextPage = this.currentPage.nextPage();
@@ -195,7 +195,7 @@ public class WizardDialog<T> extends JDialog {
 	 * Finishes the wizard.
 	 */
 	public void finish() {
-		this.result = this.currentPage.getResult();
+		this.result = this.currentPage.result();
 		setVisible(false);
 	}
 
@@ -212,7 +212,7 @@ public class WizardDialog<T> extends JDialog {
 	 * @return false.
 	 */
 	public boolean isCancelled() {
-		return false;
+		return true;
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class WizardDialog<T> extends JDialog {
 	 * 
 	 * @param firstPage
 	 */
-	private void initGUI(final WizardPage<T> firstPage) {
+	private void initGUI(final WizardPage firstPage) {
 		this.result = null;
 		this.currentPage = firstPage;
 		this.step = 0;

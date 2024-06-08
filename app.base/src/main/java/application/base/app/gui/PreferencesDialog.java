@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -18,11 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
 
 import application.definition.ApplicationConfiguration;
 import application.inifile.IniFile;
@@ -88,98 +84,80 @@ public class PreferencesDialog extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		{
-			instructions = new JLabel("Complete details below to set preferences");
-			instructions.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			instructions.setHorizontalAlignment(SwingConstants.CENTER);
-			instructions.setBorder(new EmptyBorder(5, 5, 5, 5));
-			getContentPane().add(instructions, BorderLayout.NORTH);
-		}
-		contentPanel.setLayout(new FormLayout(
-				new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
-						FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), FormSpecs.RELATED_GAP_COLSPEC,
-						FormSpecs.DEFAULT_COLSPEC, },
-				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
-		{
-			lblNewLabel = new JLabel("Logging Level:");
-			contentPanel.add(lblNewLabel, "2, 2, right, default");
-		}
-		{
-			loggingLevel = new JComboBox<>();
-			contentPanel.add(loggingLevel, "4, 2, fill, default");
-		}
-		{
-			resetToDefault = new JButton("Reset to default");
-			contentPanel.add(resetToDefault, "6, 2");
-		}
-		{
-			sendEmailNotifications = new JCheckBox("Send notifications by email");
-			contentPanel.add(sendEmailNotifications, "4, 4");
-		}
-		{
-			lblNewLabel_1 = new JLabel("Send notifications to:");
-			contentPanel.add(lblNewLabel_1, "2, 6, right, default");
-		}
-		{
-			emailRecipients = new JTextField();
-			contentPanel.add(emailRecipients, "4, 6, fill, default");
-			emailRecipients.setColumns(10);
-			emailRecipients.setEditable(false);
-		}
-		{
-			editEmailList = new JButton("Edit");
-			contentPanel.add(editEmailList, "6, 6");
-		}
-		{
-			monitorNotifications = new JCheckBox("Monitor notifications");
-			contentPanel.add(monitorNotifications, "4, 8");
-		}
-		{
-			lblNewLabel_3 = new JLabel("Select Top Colour:");
-			contentPanel.add(lblNewLabel_3, "2, 10, right, default");
-		}
-		{
-			topColourChoice = new JComboBox<>();
-			contentPanel.add(topColourChoice, "4, 10, fill, default");
-		}
-		{
-			topColorPreview = new JLabel("  ");
-			topColorPreview.setOpaque(true);
-			contentPanel.add(topColorPreview, "6, 10");
-		}
-		{
-			lblNewLabel_2 = new JLabel("Select Bottom Colour:");
-			contentPanel.add(lblNewLabel_2, "2, 12, right, default");
-		}
-		{
-			bottomColourChoice = new JComboBox<>();
-			contentPanel.add(bottomColourChoice, "4, 12, fill, default");
-		}
-		{
-			bottomColorPreview = new JLabel("  ");
-			bottomColorPreview.setOpaque(true);
-			contentPanel.add(bottomColorPreview, "6, 12");
-		}
-		{
-			JPanel buttonPane = new BottomColoredPanel();
+
+		instructions = new JLabel("Complete details below to set preferences");
+		instructions.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		instructions.setHorizontalAlignment(SwingConstants.CENTER);
+		instructions.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(instructions, BorderLayout.NORTH);
+
+		contentPanel.setLayout(new GridLayout(0, 3, 10, 10));
+		lblNewLabel = new JLabel("Logging Level:");
+		contentPanel.add(lblNewLabel);
+
+		loggingLevel = new JComboBox<>();
+		contentPanel.add(loggingLevel);
+
+		resetToDefault = new JButton("Reset to default");
+		contentPanel.add(resetToDefault);
+
+		contentPanel.add(new JLabel(""));
+		sendEmailNotifications = new JCheckBox("Notify by email");
+		contentPanel.add(sendEmailNotifications);
+		contentPanel.add(new JLabel(""));
+
+		lblNewLabel_1 = new JLabel("Send notifications to:");
+		contentPanel.add(lblNewLabel_1);
+
+		emailRecipients = new JTextField();
+		contentPanel.add(emailRecipients);
+		emailRecipients.setColumns(10);
+		emailRecipients.setEditable(false);
+
+		editEmailList = new JButton("Edit");
+		contentPanel.add(editEmailList, "6, 6");
+
+		contentPanel.add(new JLabel(""));
+		monitorNotifications = new JCheckBox("Monitor notifications");
+		contentPanel.add(monitorNotifications);
+		contentPanel.add(new JLabel(""));
+
+		lblNewLabel_3 = new JLabel("Select Top Colour:");
+		contentPanel.add(lblNewLabel_3);
+
+		topColourChoice = new JComboBox<>();
+		contentPanel.add(topColourChoice);
+
+		topColorPreview = new JLabel("  ");
+		topColorPreview.setOpaque(true);
+		contentPanel.add(topColorPreview);
+
+		lblNewLabel_2 = new JLabel("Select Bottom Colour:");
+		contentPanel.add(lblNewLabel_2);
+
+		bottomColourChoice = new JComboBox<>();
+		contentPanel.add(bottomColourChoice);
+
+		bottomColorPreview = new JLabel("  ");
+		bottomColorPreview.setOpaque(true);
+		contentPanel.add(bottomColorPreview);
+
+		JPanel buttonPane = new BottomColoredPanel();
 //			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				okButton = new JButton("Set preferences");
-				okButton.setActionCommand("Save");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				cancelButton = new JButton("Finished");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
-			}
-		}
+		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+
+		okButton = new JButton("Set preferences");
+		okButton.setActionCommand("Save");
+		buttonPane.add(okButton);
+		getRootPane().setDefaultButton(okButton);
+
+		cancelButton = new JButton("Finished");
+		cancelButton.setActionCommand("Cancel");
+		buttonPane.add(cancelButton);
+
+		additionalGUIItems(contentPanel);
+
 		okButton.addActionListener((e) -> {
 			savePreferences();
 			setVisible(false);
@@ -227,6 +205,8 @@ public class PreferencesDialog extends JDialog {
 			bottomColorPreview.setBackground(bottomColor);
 		});
 
+		additionalActionListeners();
+
 		addLoggingLevelChoices();
 		initializeFields();
 		setButtonsStatus();
@@ -244,6 +224,51 @@ public class PreferencesDialog extends JDialog {
 		IniFile.store(GUIConstants.MONITORING, Boolean.toString(monitorNotifications.isSelected()));
 		IniFile.store(GUIConstants.TOP_COLOR, (String) topColourChoice.getSelectedItem());
 		IniFile.store(GUIConstants.BOTTOM_COLOR, (String) bottomColourChoice.getSelectedItem());
+
+		saveAdditionalPreferences();
+	}
+
+	/**
+	 * Add items to the GUI. This method is called during initialisation of the GUI,
+	 * and is used to add any additional GUI items that the application may require,
+	 * over and above those already saved.
+	 * 
+	 * @param contentPanel that already contains default preferences.
+	 */
+	public void additionalGUIItems(JPanel contentPanel) {
+	}
+
+	/**
+	 * Add action listeners to additional items. This method is called during
+	 * initialisation of the GUI, and is used to add action listeners to any items
+	 * added by additionalGUIItems.
+	 */
+	public void additionalActionListeners() {
+	}
+
+	/**
+	 * Save additional preferences. This method is called when the user requests
+	 * that the preferences chosen be saved.
+	 */
+	public void saveAdditionalPreferences() {
+	}
+
+	/**
+	 * Additional preferences have valid values. This method can be called by
+	 * classes extending this class to allow the preferences to be saved while in a
+	 * valid state.
+	 */
+	public void validInput() {
+		okButton.setEnabled(true);
+	}
+
+	/**
+	 * Additional preferences have invalid values. This method can be called by
+	 * classes extending this class to prevent the preferences being saved while in
+	 * an invalid state.
+	 */
+	public void invalidInput() {
+		okButton.setEnabled(false);
 	}
 
 	private void initializeFields() {
