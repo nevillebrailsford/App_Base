@@ -11,14 +11,16 @@ public interface StoreData extends Runnable {
 	/**
 	 * The name of the file that is to be loaded.
 	 * 
-	 * @param fileName
+	 * @param fileName - a string containing the location of the file used to store
+	 *                 the model for this application.
 	 */
 	public void setFileName(String fileName);
 
 	/**
 	 * The name of the file that is to be loaded.
 	 * 
-	 * @return fileName
+	 * @return fileName - a string containing the location of the file used to store
+	 *         the model for this application.
 	 */
 	public String fileName();
 

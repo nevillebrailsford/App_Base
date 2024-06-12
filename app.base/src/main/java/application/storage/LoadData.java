@@ -11,14 +11,16 @@ public interface LoadData extends Runnable {
 	/**
 	 * The name of the file that is to be loaded.
 	 * 
-	 * @param fileName
+	 * @param fileName - a string that contains the location of the file to be used
+	 *                 to store this model.
 	 */
 	public void setFileName(String fileName);
 
 	/**
 	 * The name of the file that is to be loaded.
 	 * 
-	 * @return fileName
+	 * @return fileName - a string that contains the location of the file used to
+	 *         store this model.
 	 */
 	public String fileName();
 

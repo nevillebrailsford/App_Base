@@ -7,8 +7,15 @@ import application.definition.ApplicationConfiguration;
 import application.notification.Notification;
 import application.notification.NotificationCentre;
 
+/**
+ * An (incomplete) instantiation of the LocaData interface.
+ * 
+ */
 public abstract class AbstractLoadData implements LoadData {
 	private final static String CLASS_NAME = AbstractLoadData.class.getName();
+	/**
+	 * The logger currently in effect for this application.
+	 */
 	public final static Logger LOGGER = ApplicationConfiguration.logger();
 
 	private String fileName;
@@ -59,6 +66,12 @@ public abstract class AbstractLoadData implements LoadData {
 		return fileName;
 	}
 
+	/**
+	 * This method is called to llow the application to load the model data from
+	 * storage. A method that any extending class must instantiate.
+	 * 
+	 * @throws IOException - an exception that cannot be handled.
+	 */
 	public abstract void readData() throws IOException;
 
 	private void loadStarted() {

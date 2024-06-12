@@ -4,6 +4,9 @@ import java.util.logging.Logger;
 
 import application.definition.ApplicationConfiguration;
 
+/**
+ * Abstract class to use when building a change element for an application.
+ */
 public abstract class AbstractChange implements Change {
 	private static final String CLASS_NAME = AbstractChange.class.getName();
 	private static final Logger LOGGER = ApplicationConfiguration.logger();
@@ -66,10 +69,25 @@ public abstract class AbstractChange implements Change {
 		}
 	}
 
+	/**
+	 * The action to be taken to implement the change.
+	 * 
+	 * @throws Failure occurs when the action failed.
+	 */
 	protected abstract void doHook() throws Failure;
 
+	/**
+	 * The action to be taken when an undo request is made.
+	 * 
+	 * @throws Failure occurs when the action failed.
+	 */
 	protected abstract void undoHook() throws Failure;
 
+	/**
+	 * The action to be taken whan a redo request is made.
+	 * 
+	 * @throws Failure occurs when the action failed.
+	 */
 	protected abstract void redoHook() throws Failure;
 
 }

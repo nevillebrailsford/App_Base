@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import application.base.app.gui.ColoredPanel;
 
 /**
- * @param <T>
+ *
  */
 public class WizardDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
