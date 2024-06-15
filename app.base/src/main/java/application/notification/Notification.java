@@ -14,7 +14,7 @@ public class Notification {
 	 * @param notificationType
 	 * @param source
 	 * @param subject
-	 * @throws IllegalAtgrmentException if notificationType is null, source is null,
+	 * @throws IllegalArgumentException if notificationType is null, source is null,
 	 *                                  or there are more than 1 subject objects.
 	 */
 	public Notification(NotificationType notificationType, Object source, Object... subject) {

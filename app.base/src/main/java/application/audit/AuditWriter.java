@@ -1,10 +1,19 @@
 package application.audit;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
-import application.definition.*;
+import application.definition.ApplicationConfiguration;
+import application.definition.ApplicationDefinition;
 
+/**
+ * The class that writes audit information to the audit file.
+ */
 public class AuditWriter {
+	/**
+	 * The application definition for this application. *
+	 */
 	private ApplicationDefinition applicationDefinition;
 
 	/**
@@ -23,7 +32,7 @@ public class AuditWriter {
 	/**
 	 * write a record to the audit file
 	 * 
-	 * @param record
+	 * @param record - the record to write to the audit file.
 	 * @throws IllegalArgumentException if record is null
 	 * @throws IllegalStateException    if cannot create audit directory
 	 */

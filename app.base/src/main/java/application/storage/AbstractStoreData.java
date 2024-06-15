@@ -7,8 +7,15 @@ import application.definition.ApplicationConfiguration;
 import application.notification.Notification;
 import application.notification.NotificationCentre;
 
+/**
+ * An abstract implementation of the StoreData interface. Use this class as the
+ * base class to store the model for the application.
+ */
 public abstract class AbstractStoreData implements StoreData {
 	private final static String CLASS_NAME = AbstractStoreData.class.getName();
+	/**
+	 * The logger to use in this class.
+	 */
 	public final static Logger LOGGER = ApplicationConfiguration.logger();
 
 	private String fileName;
@@ -70,6 +77,12 @@ public abstract class AbstractStoreData implements StoreData {
 		return fileName;
 	}
 
+	/**
+	 * This method is called when a request is made to store the model. It must be
+	 * implemented by any class intending to store the applications model.
+	 * 
+	 * @throws IOException - thrown when an error occurs.
+	 */
 	public abstract void storeData() throws IOException;
 
 	private void storeStarted() {

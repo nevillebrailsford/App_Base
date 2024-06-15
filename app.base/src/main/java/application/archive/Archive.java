@@ -7,6 +7,10 @@ import java.util.logging.Logger;
 
 import application.definition.ApplicationConfiguration;
 
+/**
+ * A class that provide the function to copy a model to an archive, that is to
+ * save the model.
+ */
 public class Archive {
 	private final static String CLASS_NAME = Archive.class.getName();
 	public final static Logger LOGGER = ApplicationConfiguration.logger();
@@ -14,9 +18,10 @@ public class Archive {
 	/**
 	 * Copies modelFile to archiveFile.
 	 * 
-	 * @param modelFile
-	 * @return archiveFile
-	 * @throws IOException
+	 * @param modelFile - a File that is the model to archive
+	 * @return archiveFile - a File that is the archive file to copy
+	 * @throws IOException              - when an error occurs while reading the
+	 *                                  model file or writing the archive file.
 	 * @throws IllegalStateException    if application not registered.
 	 * @throws IllegalArgumentException if modelFile is null, or modelFile does not
 	 *                                  exist.
