@@ -78,6 +78,19 @@ public abstract class AbstractStoreData implements StoreData {
 	}
 
 	/**
+	 * Send a notification that the storage request has failed. This allows classes
+	 * that extend this class to signal storage failure even outside the storeData
+	 * call.
+	 * 
+	 * @param e - an exception
+	 */
+	public void signalStoreFailed(Exception e) {
+		LOGGER.entering(fileName, "signalStoreFailed", e.getMessage());
+		storeFailed(new IOException(e));
+		LOGGER.exiting(fileName, "signalStoreFailed");
+	}
+
+	/**
 	 * This method is called when a request is made to store the model. It must be
 	 * implemented by any class intending to store the applications model.
 	 * 
