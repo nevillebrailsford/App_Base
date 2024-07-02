@@ -85,9 +85,9 @@ public abstract class AbstractStoreData implements StoreData {
 	 * @param e - an exception
 	 */
 	public void signalStoreFailed(Exception e) {
-		LOGGER.entering(fileName, "signalStoreFailed", e.getMessage());
+		LOGGER.entering(CLASS_NAME, "signalStoreFailed", e.getMessage());
 		storeFailed(new IOException(e));
-		LOGGER.exiting(fileName, "signalStoreFailed");
+		LOGGER.exiting(CLASS_NAME, "signalStoreFailed");
 	}
 
 	/**
