@@ -176,6 +176,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 
 	public void setLookAndFeel() {
 		LOGGER.entering(CLASS_NAME, "setLookAndFeel");
+		ApplicationConfiguration.applicationDefinition().topColor();
 		if (ApplicationConfiguration.applicationDefinition().bottomColor().isPresent()) {
 			Color menuBarBackground = ApplicationConfiguration.applicationDefinition().bottomColor().get();
 			UIManager.put("MenuBar.background", menuBarBackground);
