@@ -88,13 +88,13 @@ public class ChangeManager {
 			}
 		}
 		setChangable();
-		fireStateChanged();
 		LOGGER.exiting(CLASS_NAME, "redo");
 	}
 
 	private void setChangable() {
 		undoable = !undoStack.isEmpty();
 		redoable = !redoStack.isEmpty();
+		fireStateChanged();
 	}
 
 	public void addListener(ChangeStateListener l) {
