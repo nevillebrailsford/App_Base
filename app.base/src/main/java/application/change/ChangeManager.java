@@ -1,6 +1,7 @@
 package application.change;
 
 import java.util.Stack;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import application.definition.ApplicationConfiguration;
@@ -16,6 +17,8 @@ public class ChangeManager {
 
 	private boolean undoable = false;
 	private boolean redoable = false;
+
+	private Vector<ChangeStateListener> listeners = new Vector<>();
 
 	public static synchronized ChangeManager instance() {
 		if (instance == null) {
@@ -85,12 +88,29 @@ public class ChangeManager {
 			}
 		}
 		setChangable();
+		fireStateChanged();
 		LOGGER.exiting(CLASS_NAME, "redo");
 	}
 
 	private void setChangable() {
 		undoable = !undoStack.isEmpty();
 		redoable = !redoStack.isEmpty();
+	}
+
+	public void addListener(ChangeStateListener l) {
+		listeners.addElement(l);
+	}
+
+	public void removeListener(ChangeStateListener l) {
+		listeners.removeElement(l);
+	}
+
+	private void fireStateChanged() {
+		LOGGER.entering(CLASS_NAME, "fireStateChanged");
+		for (ChangeStateListener csl : listeners) {
+			csl.stateChanged();
+		}
+		LOGGER.exiting(CLASS_NAME, "fireStateChanged");
 	}
 
 }
