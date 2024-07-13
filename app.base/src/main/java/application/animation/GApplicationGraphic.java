@@ -11,6 +11,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.Stack;
 
 public abstract class GApplicationGraphic extends GApplicationEnvironment {
@@ -67,6 +68,15 @@ public abstract class GApplicationGraphic extends GApplicationEnvironment {
 		showShape(rect);
 	}
 
+	public void rect(float x, float y, float w, float h, float r) {
+		if (GApplication.app().rectMode == CENTER) {
+			x -= w / 2;
+			y -= h / 2;
+		}
+		RoundRectangle2D.Float rect = new RoundRectangle2D.Float(x, y, w, h, r, r);
+		showShape(rect);
+	}
+
 	public void square(float x, float y, float w) {
 		rect(x, y, w, w);
 	}
@@ -110,7 +120,7 @@ public abstract class GApplicationGraphic extends GApplicationEnvironment {
 		AffineTransform transform = new AffineTransform();
 		transform.translate(matrix.translateX, matrix.translateY);
 		gAppShape.transform = transform;
-		gAppShape.stroke = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+		gAppShape.stroke = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	}
 
 	private void drawGShape(GAppShape shape) {
@@ -138,7 +148,7 @@ public abstract class GApplicationGraphic extends GApplicationEnvironment {
 		AffineTransform transform = new AffineTransform();
 		transform.translate(matrix.translateX, matrix.translateY);
 		shape.transform = transform;
-		shape.stroke = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
+		shape.stroke = new BasicStroke(strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	}
 
 	public class Matrix {
