@@ -3,6 +3,11 @@ package application.definition;
 import java.io.File;
 import java.util.logging.Logger;
 
+/**
+ * ApplicationConfiguration contains configuration details specific to the
+ * application. For example, it contains the logger being used and the model
+ * directory being used.
+ */
 public class ApplicationConfiguration {
 	private static ApplicationDefinition registeredApplication = null;
 	private static Logger logger = null;
@@ -16,7 +21,7 @@ public class ApplicationConfiguration {
 	 * @param rootDirectory
 	 * @throws IllegalArgumentException if application is null, or rootDirectory is
 	 *                                  null or empty
-	 * @throws IllegalSTateException    if an application has already been
+	 * @throws IllegalStateException    if an application has already been
 	 *                                  registered
 	 */
 	public synchronized static void registerApplication(ApplicationDefinition applicationDefinition,
@@ -109,7 +114,7 @@ public class ApplicationConfiguration {
 	 * Change the number of threads that the executor service will use. Once the
 	 * executor service has been created, this call will have no effect, however.
 	 * 
-	 * @param number
+	 * @param number - the required thread count
 	 */
 	public static void setExecutorServiceThreads(int number) {
 		ApplicationConfiguration.executorServiceThreads = number;

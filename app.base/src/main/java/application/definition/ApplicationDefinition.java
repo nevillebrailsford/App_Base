@@ -33,7 +33,7 @@ public class ApplicationDefinition {
 	/**
 	 * Create the application specific details.
 	 * 
-	 * @param applicationName
+	 * @param applicationName - the name for this application.
 	 * @throws IllegalArgumentException if applicationName is null or empty
 	 */
 	public ApplicationDefinition(String applicationName) {
@@ -76,7 +76,7 @@ public class ApplicationDefinition {
 	 * This is the default trace level for this application. Override to change the
 	 * default setting.
 	 * 
-	 * @return level
+	 * @return level the trace level being used.
 	 */
 	public Level level() {
 		return Level.ALL;
@@ -84,9 +84,10 @@ public class ApplicationDefinition {
 
 	/**
 	 * This is the default version for this application. Override to change the
-	 * default setting.
+	 * default setting. The default is to use the definition in the manifest file
+	 * for the jar - under the key Application-Version.
 	 * 
-	 * @return version
+	 * @return version the version for this application.
 	 */
 	public String version() {
 		String result = "";
@@ -99,9 +100,10 @@ public class ApplicationDefinition {
 	}
 
 	/**
-	 * This is the build date for the application.
+	 * This is the build date for the application. This information is extracted
+	 * from the manifest file for the jar - under the key Build-Date.
 	 * 
-	 * @return
+	 * @return the build date for this application.
 	 */
 	public String buildDate() {
 		String result = "";
@@ -114,9 +116,10 @@ public class ApplicationDefinition {
 	}
 
 	/**
-	 * This is the build number for the application.
+	 * This is the build number for the application. This information is extracted
+	 * from the manifest file for the jar - under the key Build-Number.
 	 * 
-	 * @return
+	 * @return the build number
 	 */
 	public String buildNumber() {
 		String result = "";
@@ -131,7 +134,7 @@ public class ApplicationDefinition {
 	/**
 	 * Does the application require a model to be stored in a model file.
 	 * 
-	 * @return
+	 * @return true if there is a model file, false otherwise.
 	 */
 	public boolean hasModelFile() {
 		return true;
@@ -140,7 +143,7 @@ public class ApplicationDefinition {
 	/**
 	 * The top colour for all panels used by the application.
 	 * 
-	 * @return
+	 * @return the colour to be used as the top colour.
 	 */
 	public Optional<Color> topColor() {
 		return Optional.ofNullable((Color) null);
@@ -149,7 +152,7 @@ public class ApplicationDefinition {
 	/**
 	 * The bottom colour for all panels used by the application.
 	 * 
-	 * @return
+	 * @return the colour to be used as the bottom colour.
 	 */
 	public Optional<Color> bottomColor() {
 		return Optional.ofNullable((Color) null);

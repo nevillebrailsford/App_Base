@@ -6,12 +6,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+/**
+ * A typical UK address construct.
+ */
 public final class Address implements Comparable<Address> {
 	private String street = "";
 	private String town = "";
 	private String county = "";
 	private PostCode postcode = null;
 
+	/**
+	 * Create an address.
+	 * 
+	 * @param postCode       - the standard UK post code.
+	 * @param linesOfAddress - array consisting of the rest of the address. It is
+	 *                       assumed that the first line is the street name, the
+	 *                       second is the town or city name and the final line is
+	 *                       the county.
+	 */
 	public Address(PostCode postCode, String[] linesOfAddress) {
 		if (postCode == null) {
 			throw new IllegalArgumentException("Address: postCode is null");
@@ -31,6 +43,11 @@ public final class Address implements Comparable<Address> {
 		this.county = linesOfAddress[2];
 	}
 
+	/**
+	 * Create an address using a pre-existing address as a basis.
+	 * 
+	 * @param that - the address to be used as the basis.
+	 */
 	public Address(Address that) {
 		if (that == null) {
 			throw new IllegalArgumentException("Address: that is null");
@@ -41,6 +58,11 @@ public final class Address implements Comparable<Address> {
 		this.county = that.county;
 	}
 
+	/**
+	 * Create an address using a w3 DOM element as the basis.
+	 * 
+	 * @param addressElement - the w3 element.
+	 */
 	public Address(Element addressElement) {
 		if (addressElement == null) {
 			throw new IllegalArgumentException("Address: addressElement is null");
@@ -59,6 +81,12 @@ public final class Address implements Comparable<Address> {
 		this.county = linesOfAddress[2];
 	}
 
+	/**
+	 * Prepare the address for storage.
+	 * 
+	 * @param document - the w3 document to be used to construct the element
+	 * @return a w3 DOM element
+	 */
 	public Element buildElement(Document document) {
 		if (document == null) {
 			throw new IllegalArgumentException("Address: document is null");
@@ -72,6 +100,11 @@ public final class Address implements Comparable<Address> {
 
 	}
 
+	/**
+	 * Get the lines of the address.
+	 * 
+	 * @return an array containing the lines of the address
+	 */
 	public String[] linesOfAddress() {
 		String[] lines = new String[3];
 		lines[0] = street;
@@ -80,22 +113,47 @@ public final class Address implements Comparable<Address> {
 		return lines;
 	}
 
+	/**
+	 * Get the UK post code.
+	 * 
+	 * @return the post code.
+	 */
 	public PostCode postCode() {
 		return new PostCode(postcode);
 	}
 
+	/**
+	 * Get the street from the address.
+	 * 
+	 * @return the street.
+	 */
 	public String street() {
 		return street;
 	}
 
+	/**
+	 * Get the town or city from the address.
+	 * 
+	 * @return the town or city.
+	 */
 	public String town() {
 		return town;
 	}
 
+	/**
+	 * Get the county from the address.
+	 * 
+	 * @return the county.
+	 */
 	public String county() {
 		return county;
 	}
 
+	/**
+	 * Get the full address.
+	 * 
+	 * @return the full address.
+	 */
 	public String fullAddress() {
 		return toString();
 	}
@@ -133,32 +191,64 @@ public final class Address implements Comparable<Address> {
 		return stringBuilder.toString();
 	}
 
+	/**
+	 * Builder to be used to construct the address.
+	 */
 	public static class Builder {
 		private PostCode postcode = null;
 		private String street = null;
 		private String town = null;
 		private String county = null;
 
+		/**
+		 * Append the street to the builder information.
+		 * 
+		 * @param street - the name of the street
+		 * @return the builder
+		 */
 		public Builder street(String street) {
 			this.street = street;
 			return this;
 		}
 
+		/**
+		 * Append the town or city to the builder information.
+		 * 
+		 * @param town - the name of the town or city.
+		 * @return the builder
+		 */
 		public Builder town(String town) {
 			this.town = town;
 			return this;
 		}
 
+		/**
+		 * Append the county to the builder information.
+		 * 
+		 * @param county - the name of the county
+		 * @return the builder
+		 */
 		public Builder county(String county) {
 			this.county = county;
 			return this;
 		}
 
+		/**
+		 * Append the post code to the builder information.
+		 * 
+		 * @param postcode - the UK post code
+		 * @return the builder
+		 */
 		public Builder postCode(PostCode postcode) {
 			this.postcode = postcode;
 			return this;
 		}
 
+		/**
+		 * Construct an address from all the information supplied to the builder.
+		 * 
+		 * @return a new Address.
+		 */
 		public Address build() {
 			if (postcode == null) {
 				throw new IllegalArgumentException("Address: postcode is null");

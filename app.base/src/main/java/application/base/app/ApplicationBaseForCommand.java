@@ -32,6 +32,10 @@ import application.storage.StoreDetails;
 import application.thread.ThreadServices;
 import application.timer.TimerService;
 
+/**
+ * Abstract class to be used as base for applications in this framework that
+ * require no GUI infrastructure.
+ */
 public abstract class ApplicationBaseForCommand extends JFrame {
 	private static final long serialVersionUID = 1L;
 
@@ -41,12 +45,13 @@ public abstract class ApplicationBaseForCommand extends JFrame {
 	public static final String DIR = "dir";
 	public static final String NAME = "name";
 
+	public Parameters parameters;
+
 	protected Object loadComplete = new Object();
 	protected Exception loadFailed = null;
 	protected LoadData dataLoader;
 	protected StoreDetails storeDetails;
 
-	public Parameters parameters;
 	private static ApplicationBaseForCommand application;
 
 	protected NotificationListener listener = ((notification) -> {
@@ -68,8 +73,9 @@ public abstract class ApplicationBaseForCommand extends JFrame {
 	});
 
 	/**
+	 * The method that classes extending this class must invoke.
 	 * 
-	 * @param args
+	 * @param args - parameters passed into the application.
 	 */
 	public static void launch(String[] args) {
 		Exception ex = new Exception();
@@ -98,6 +104,7 @@ public abstract class ApplicationBaseForCommand extends JFrame {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Error during initialization",
 					JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
 		}
 		application.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		application.addWindowListener(new WindowAdapter() {
@@ -115,6 +122,11 @@ public abstract class ApplicationBaseForCommand extends JFrame {
 		application.setVisible(true);
 	}
 
+	/**
+	 * Get the parameters
+	 * 
+	 * @return the parameters
+	 */
 	public Parameters getParameters() {
 		return parameters;
 	}
