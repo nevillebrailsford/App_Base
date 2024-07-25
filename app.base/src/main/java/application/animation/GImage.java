@@ -68,7 +68,28 @@ public class GImage {
 				g.rotate(Math.toRadians(90), x, y);
 				g.drawImage(im, 0, 0, (int) width, (int) height, null);
 			} else {
-				g.drawImage(im, 0, 0, (int) width, (int) height, null);
+				if (!preserveRatio) {
+					g.drawImage(im, 0, 0, (int) width, (int) height, null);
+				} else {
+					g.setPaint(Color.black);
+					g.fillRect(0, 0, (int) width, (int) height);
+					float scale = 0;
+					int imWidth = im.getWidth();
+					int imHeight = im.getHeight();
+					float scaleW = width / imWidth;
+					float scaleH = height / imHeight;
+					if (imHeight * scaleW > height) {
+						scale = scaleH;
+					} else {
+						scale = scaleW;
+					}
+					float newWidth = imWidth * scale;
+					float newHeight = imHeight * scale;
+					float xTranslate = (width - (newWidth)) / 2;
+					float yTranslate = (height - (newHeight)) / 2;
+					g.translate(xTranslate, yTranslate);
+					g.drawImage(im, 0, 0, (int) newWidth, (int) newHeight, null);
+				}
 			}
 			g.dispose();
 		} catch (
