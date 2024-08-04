@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>brailsoft</groupId>
     <artifactId>app.base</artifactId>
-    <version>2.1.5</version>
+    <version>2.1.6</version>
     <name>App Base</name>
     <description>Base functions for brailsoft applications</description>
 

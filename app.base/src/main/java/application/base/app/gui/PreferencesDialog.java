@@ -25,6 +25,8 @@ import application.inifile.IniFile;
 import application.mail.MailConfigurer;
 
 public class PreferencesDialog extends JDialog {
+	private static final String EMPTY = "empty";
+
 	private static final long serialVersionUID = 1L;
 
 	private static final String CLASS_NAME = PreferencesDialog.class.getName();
@@ -220,7 +222,11 @@ public class PreferencesDialog extends JDialog {
 	private void savePreferences() {
 		IniFile.store(GUIConstants.LOGGING_LEVEL, loggingLevel.getSelectedItem().toString());
 		IniFile.store(GUIConstants.EMAIL_NOTIFICATION, Boolean.toString(sendEmailNotifications.isSelected()));
-		IniFile.store(GUIConstants.EMAIL_LIST, emailRecipients.getText());
+		if (emailRecipients.getText().isEmpty()) {
+			IniFile.store(GUIConstants.EMAIL_LIST, EMPTY);
+		} else {
+			IniFile.store(GUIConstants.EMAIL_LIST, emailRecipients.getText());
+		}
 		IniFile.store(GUIConstants.MONITORING, Boolean.toString(monitorNotifications.isSelected()));
 		IniFile.store(GUIConstants.TOP_COLOR, (String) topColourChoice.getSelectedItem());
 		IniFile.store(GUIConstants.BOTTOM_COLOR, (String) bottomColourChoice.getSelectedItem());
@@ -278,7 +284,11 @@ public class PreferencesDialog extends JDialog {
 			loggingLevel.setSelectedItem(IniFile.value(GUIConstants.LOGGING_LEVEL));
 		}
 		sendEmailNotifications.setSelected(Boolean.valueOf(IniFile.value(GUIConstants.EMAIL_NOTIFICATION)));
-		emailRecipients.setText(IniFile.value(GUIConstants.EMAIL_LIST));
+		if (IniFile.value(GUIConstants.EMAIL_LIST).equals(EMPTY)) {
+			emailRecipients.setText("");
+		} else {
+			emailRecipients.setText(IniFile.value(GUIConstants.EMAIL_LIST));
+		}
 		monitorNotifications.setSelected(Boolean.valueOf(IniFile.value(GUIConstants.MONITORING)));
 		initializeColorChoice(topColourChoice);
 		if (!IniFile.value(GUIConstants.TOP_COLOR).isEmpty()) {

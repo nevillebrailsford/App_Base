@@ -18,11 +18,14 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import application.definition.ApplicationConfiguration;
 
@@ -148,6 +151,17 @@ public class EmailListDialog extends JDialog {
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				changeStatus();
+			}
+		});
+		emailJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		emailJList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (emailJList.getSelectedValue() != null) {
+					emailRecipient.setText(emailJList.getSelectedValue());
+				} else {
+					emailRecipient.setText("");
+				}
 			}
 		});
 		addButton.addActionListener((e) -> {
