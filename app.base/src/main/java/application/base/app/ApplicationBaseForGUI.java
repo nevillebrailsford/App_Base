@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import application.archive.Archive;
+import application.change.ChangeManager;
 import application.definition.ApplicationConfiguration;
 import application.definition.ApplicationDefinition;
 import application.definition.BaseConstants;
@@ -27,6 +28,7 @@ import application.notification.NotificationCentre;
 import application.notification.NotificationListener;
 import application.notification.NotificationMonitor;
 import application.notification.NotificationType;
+import application.preferences.PreferencesDialog;
 import application.storage.LoadData;
 import application.storage.LoadState;
 import application.storage.Storage;
@@ -36,7 +38,55 @@ import application.thread.ThreadServices;
 import application.timer.TimerService;
 import application.utils.Util;
 
-public abstract class ApplicationBaseForGUI extends JFrame {
+/**
+ * <p>
+ * This is the base class for all applications in this framework.
+ * <p>
+ * You can extend this class and get all the benefits a graphical program with
+ * facilities such as logging, auditing, notification, storage already provided.
+ * <p>
+ * Your program must implement a <code>main</code> method, in which is must make
+ * a call to <code>launch</code> to get the GUI up and running.
+ * <p>
+ * You define the name and working directory of the application by passing in
+ * the following parameters as arguments to the <code>main</code>, which you
+ * then forward to the <code>launch</code> method: <br>
+ * <code>--name=</code> the name of the application. <br>
+ * <code>--dir=</code> the path to the working directory. If not specified the
+ * application will use the users <code>home</code> directory.
+ * <p>
+ * Your application will be called at <code>createApplicationDefinition</code>
+ * to define this application.
+ * <p>
+ * The logging facility will now be enabled.
+ * <p>
+ * Your application will next be called at <code>configureStoreDetails</code> to
+ * define the storage requirements for this application. This method is called
+ * to create a new <code>StoreDetails</code> object and store it in
+ * <code>storeDetails</code>.
+ * <p>
+ * If your application requires its model to be loaded into storage, this will
+ * occur now, and this class will wait for the load to complete before
+ * proceeding.
+ * <p>
+ * Finally, your application is called at <code>start</code> for you to create
+ * the graphical user interface within the provided <code>JFrame</code>.
+ * <p>
+ * At last, the application will now be displayed on the screen.
+ * <p>
+ * When your application wants to stop it simply calls the <code>shutdown</code>
+ * method. This method will call the method <code>terminate</code> method so
+ * that your application can do any tidying up necessary.
+ * <p>
+ * Finally this application will close.
+ * 
+ * @see IApplication
+ * 
+ * @author neville
+ * @version 3.0.0
+ * 
+ */
+public abstract class ApplicationBaseForGUI extends JFrame implements IApplication {
 	private static final long serialVersionUID = 1L;
 
 	private static final String CLASS_NAME = ApplicationBaseForGUI.class.getName();
@@ -48,7 +98,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 	protected Object loadComplete = new Object();
 	protected Exception loadFailed = null;
 	protected LoadData dataLoader;
-	protected StoreDetails storeDetails;
+	private StoreDetails storeDetails;
 
 	private Parameters parameters;
 	private static ApplicationBaseForGUI application;
@@ -71,9 +121,82 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		}
 	});
 
+	@Override
+	public void preferencesAction() {
+		LOGGER.entering(CLASS_NAME, "preferencesAction");
+		PreferencesDialog dialog = new PreferencesDialog(this);
+		dialog.setVisible(true);
+		dialog.dispose();
+		LOGGER.exiting(CLASS_NAME, "preferencesAction");
+	}
+
+	@Override
+	public void undoAction() {
+		LOGGER.entering(CLASS_NAME, "undoAction");
+		ThreadServices.instance().executor().submit(() -> {
+			ChangeManager.instance().undo();
+		});
+		LOGGER.exiting(CLASS_NAME, "undoAction");
+	}
+
+	@Override
+	public void redoAction() {
+		LOGGER.entering(CLASS_NAME, "redoAction");
+		ThreadServices.instance().executor().submit(() -> {
+			ChangeManager.instance().redo();
+		});
+		LOGGER.exiting(CLASS_NAME, "redoAction");
+	}
+
+	@Override
+	public void exitApplicationAction() {
+		LOGGER.entering(CLASS_NAME, "exitApplicationAction");
+		try {
+			shutdown();
+		} catch (Exception e) {
+		}
+		LOGGER.exiting(CLASS_NAME, "exitApplicationAction");
+	}
+
+	@Override
+	public void helpAboutAction() {
+		LOGGER.entering(CLASS_NAME, "helpAboutAction");
+		String applicationName = ApplicationConfiguration.applicationDefinition().applicationName();
+		String title = "About " + applicationName;
+		String message = getBuildInformation(applicationName);
+		JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
+		LOGGER.exiting(CLASS_NAME, "helpAboutAction");
+	}
+
+	@Override
+	public ApplicationDefinition createApplicationDefinition(Parameters parameters) {
+		return null;
+	}
+
+	@Override
+	public StoreDetails configureStoreDetails() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void start(JFrame frame) {
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
+	 * This call is made during the windowClosing process to allow the application
+	 * to tidy up before the framework itself is shut down.
+	 */
+	public abstract void terminate();
+
+	/**
+	 * Launch the application and establish all the graphical environment needed to
+	 * show the window on the screen.
 	 * 
-	 * @param args
+	 * @param args - the arguments as they were passed into the <code>main</code>
+	 *             method.
 	 */
 	public static void launch(String[] args) {
 		Exception ex = new Exception();
@@ -100,6 +223,25 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		});
 	}
 
+	/**
+	 * Obtain the <code>Parameters</code> object that contains the arguments passed
+	 * into <code>launch</code> in a more structured fashion.
+	 * 
+	 * @return the <code>Parameters</code> object.
+	 */
+	public Parameters getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * Shut this application down.
+	 */
+	public void shutdown() {
+		LOGGER.entering(CLASS_NAME, "shutdown");
+		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		LOGGER.exiting(CLASS_NAME, "shutdown");
+	}
+
 	private void createEnvironment(String[] args) {
 		parameters = new Parameters(args);
 		try {
@@ -107,6 +249,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Error during initialization",
 					JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
 		}
 		application.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		application.addWindowListener(new WindowAdapter() {
@@ -126,14 +269,12 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		application.setVisible(true);
 	}
 
-	public Parameters getParameters() {
-		return parameters;
-	}
-
 	private void init() throws Exception {
 		Parameters parameters = getParameters();
 		if (invalidParameters(parameters)) {
-			System.out.println("Usage: java -jar jar_name <--name=application name> <--dir=base directory>");
+			String message = "Usage: java -jar jar_name <--name=application name> <--dir=base directory>";
+			System.out.println(message);
+			JOptionPane.showMessageDialog(null, message);
 			System.exit(0);
 		}
 		configureApplication(parameters);
@@ -146,7 +287,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		}
 		addShutDownHook();
 		configureLogging();
-		configureStoreDetails();
+		storeDetails = configureStoreDetails();
 		LOGGER = ApplicationConfiguration.logger();
 		if (!IniFile.value(BaseConstants.MONITORING).isBlank()) {
 			boolean monitor = Boolean.parseBoolean(IniFile.value(BaseConstants.MONITORING));
@@ -164,17 +305,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		NotificationCentre.removeListener(listener);
 	}
 
-	private final void addShutDownHook() {
-		Runnable runner = new Runnable() {
-			@Override
-			public void run() {
-				LockManager.unlock();
-			}
-		};
-		Runtime.getRuntime().addShutdownHook(new Thread(runner, "Application Hook"));
-	}
-
-	public void setLookAndFeel() {
+	private void setLookAndFeel() {
 		LOGGER.entering(CLASS_NAME, "setLookAndFeel");
 		ApplicationConfiguration.applicationDefinition().topColor();
 		if (ApplicationConfiguration.applicationDefinition().bottomColor().isPresent()) {
@@ -208,6 +339,16 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 			LOGGER.fine("Caught exception: " + e.getMessage());
 		}
 		LOGGER.exiting(CLASS_NAME, "setLookAndFeel");
+	}
+
+	private final void addShutDownHook() {
+		Runnable runner = new Runnable() {
+			@Override
+			public void run() {
+				LockManager.unlock();
+			}
+		};
+		Runtime.getRuntime().addShutdownHook(new Thread(runner, "Application Hook"));
 	}
 
 	private boolean invalidParameters(Parameters parameters) {
@@ -258,45 +399,6 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		}
 	}
 
-	/**
-	 * This call is made during the ApplicationBaseForGUI.init() process to allow
-	 * the application to establish its unique values. The ApplicationDefinition
-	 * will be dependent on each application's requirements.
-	 * 
-	 * @param parameters
-	 * @return an ApplicationDefinition
-	 */
-	public abstract ApplicationDefinition createApplicationDefinition(Parameters parameters);
-
-	/**
-	 * This call is made during the ApplicationBaseForGUI.init() process to allow
-	 * the application to define the requirements to be able to load the model into
-	 * storage.
-	 */
-	public abstract void configureStoreDetails();
-
-	/**
-	 * This call is made during the ApplicationBaseForGUI.createEnvironment()
-	 * process to allow the application to define and create the initial screen to
-	 * display in the subsequent setVisible() call.
-	 * 
-	 * @param frame
-	 */
-	public abstract void start(JFrame frame);
-
-	/**
-	 * This call is made during the windowClosing process to allow the application
-	 * to tidy up before the framework itself is shut down.
-	 */
-	public abstract void terminate();
-
-	/**
-	 * Perform the initial archive and load of the model. This will be done on a
-	 * separate thread.
-	 * 
-	 * @param storeDetails
-	 * @throws Exception
-	 */
 	private void loadModelAndWait(StoreDetails storeDetails) throws Exception {
 		LOGGER.entering(CLASS_NAME, "loadModelAndWait", storeDetails);
 		if (storeDetails == null) {
@@ -337,13 +439,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		LOGGER.exiting(CLASS_NAME, "loadModelAndWait");
 	}
 
-	public void shutdown() {
-		LOGGER.entering(CLASS_NAME, "shutdown");
-		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		LOGGER.exiting(CLASS_NAME, "shutdown");
-	}
-
-	public void stop() throws Exception {
+	private void stop() throws Exception {
 		LOGGER.entering(CLASS_NAME, "stop");
 		application.terminate();
 		TimerService.instance().stop();
@@ -353,7 +449,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		LogConfigurer.shutdown();
 	}
 
-	public void archiveExistingModel(String modelName, String propertyFileName) throws Exception {
+	private void archiveExistingModel(String modelName, String propertyFileName) throws Exception {
 		LOGGER.entering(CLASS_NAME, "archiveExistingModel", new Object[] { modelName, propertyFileName });
 		File modelDirectory = obtainModelDirectory(modelName);
 		File dataFile = new File(modelDirectory, propertyFileName);
@@ -373,7 +469,7 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		LOGGER.exiting(CLASS_NAME, "archiveExistingModel");
 	}
 
-	public boolean loadExistingModel(LoadData loadData, String modelName, String propertyFileName) {
+	private boolean loadExistingModel(LoadData loadData, String modelName, String propertyFileName) {
 		LOGGER.entering(CLASS_NAME, "loadExistingModel", new Object[] { modelName, propertyFileName });
 		boolean success = false;
 		File modelDirectory = obtainModelDirectory(modelName);
@@ -408,6 +504,26 @@ public abstract class ApplicationBaseForGUI extends JFrame {
 		}
 		LOGGER.exiting(CLASS_NAME, "obtainModelDirectory", modelDirectory);
 		return modelDirectory;
+	}
+
+	private String getBuildInformation(String applicationName) {
+		LOGGER.entering(applicationName, "getBuildInformation");
+		String result = "";
+		StringBuilder builder = new StringBuilder(applicationName);
+		try {
+			builder.append("\nBuild: ").append(ApplicationDefinition.getFromManifest("Build-Number", getClass())
+					.orElse("Could not be determined"));
+			builder.append("\nBuild Date: ").append(
+					ApplicationDefinition.getFromManifest("Build-Date", getClass()).orElse("Could not be determined"));
+			builder.append("\nVersion: ").append(ApplicationDefinition
+					.getFromManifest("Application-Version", getClass()).orElse("Could not be determined"));
+		} catch (Exception e) {
+			builder.append("\nUnable to gather build version and date information\ndue to exception " + e.getMessage());
+			LOGGER.fine("Caught exception: " + e.getMessage());
+		}
+		result = builder.toString();
+		LOGGER.exiting(applicationName, "getBuildInformation", result);
+		return result;
 	}
 
 }

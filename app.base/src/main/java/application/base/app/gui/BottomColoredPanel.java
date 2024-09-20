@@ -10,8 +10,11 @@ import javax.swing.JPanel;
 import application.definition.ApplicationConfiguration;
 
 /**
- * Provide an adjusted JPanel with the background set to the bottom colour being
- * used for this application.
+ * Provide an adjusted <code>JPanel</code> with the background set to the bottom
+ * colour being used for this application.
+ * 
+ * @author neville
+ * @version 3.0.0
  */
 public class BottomColoredPanel extends JPanel {
 	private static final long serialVersionUID = 1L;

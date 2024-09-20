@@ -9,13 +9,28 @@ import javax.swing.JPanel;
 
 import application.definition.ApplicationConfiguration;
 
+/**
+ * Provide an adjusted <code>JPanel</code> with the background set to the top
+ * colour being used for this application.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public class TopColoredPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Create the panel with no layout manager set.
+	 */
 	public TopColoredPanel() {
 		setOpaque(false);
 	}
 
+	/**
+	 * Create the panel with a layout manager as specified.
+	 * 
+	 * @param layout - the layout manager to be used for this panel.
+	 */
 	public TopColoredPanel(LayoutManager layout) {
 		super();
 		setLayout(layout);

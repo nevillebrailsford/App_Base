@@ -8,10 +8,25 @@ import java.nio.file.StandardOpenOption;
 
 import application.definition.ApplicationConfiguration;
 
+/**
+ * Provide a mechanism to indicate that the application is in use.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
+
 public class LockManager {
 	private static File file;
 	private static FileChannel channel;
 
+	/**
+	 * Use a file to provide a locking mechanism for the application. If the file
+	 * exists, it means that the application is already running. The file is placed
+	 * within the working directory of the application, so should work across
+	 * multiple machines.
+	 * 
+	 * @return true if the file was created successfully, false otherwise.
+	 */
 	public static boolean lock() {
 		File applicationRoot = ApplicationConfiguration.rootDirectory();
 		String lockFileName = ApplicationConfiguration.applicationDefinition().applicationName() + ".lock";
@@ -30,6 +45,9 @@ public class LockManager {
 		return true;
 	}
 
+	/**
+	 * Release the lock, by deleting the file.
+	 */
 	public static void unlock() {
 		file.delete();
 	}

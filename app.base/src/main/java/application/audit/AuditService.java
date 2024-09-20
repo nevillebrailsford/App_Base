@@ -2,6 +2,9 @@ package application.audit;
 
 /**
  * AuditService supports the writing of audit information to an audit file.
+ * 
+ * @author neville
+ * @version 3.0.0
  */
 public class AuditService {
 	private static AuditWriter writer = new AuditWriter();

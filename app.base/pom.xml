@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>brailsoft</groupId>
     <artifactId>app.base</artifactId>
-    <version>2.1.7</version>
+    <version>3.0.0</version>
     <name>App Base</name>
     <description>Base functions for brailsoft applications</description>
 
@@ -118,11 +118,15 @@
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>3.1.0</version>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-<!--                <version>3.7.0</version>                -->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <overview>${basedir}/src/main/java/overview.html</overview>
+                    <doclint>all,-missing</doclint>
+                </configuration>
+            </plugin>
         </plugins>
     </reporting>
 </project>

@@ -6,6 +6,9 @@ import application.definition.ApplicationConfiguration;
 
 /**
  * Abstract class to use when building a change element for an application.
+ * 
+ * @author neville
+ * @version 3.0.0
  */
 public abstract class AbstractChange implements Change {
 	private static final String CLASS_NAME = AbstractChange.class.getName();

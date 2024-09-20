@@ -1,5 +1,11 @@
 package application.definition;
 
+/**
+ * Set of constants to be used throughout an application.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public interface BaseConstants {
 	public static final String LOG_DIRECTORY_NAME = "logs";
 	public static final String LOG_FILE_SUFFIX = ".trace";

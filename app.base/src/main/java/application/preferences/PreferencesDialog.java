@@ -1,4 +1,4 @@
-package application.base.app.gui;
+package application.preferences;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -20,11 +20,23 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import application.base.app.gui.BottomColoredPanel;
+import application.base.app.gui.ColorProvider;
+import application.base.app.gui.ColoredPanel;
+import application.base.app.gui.GUIConstants;
 import application.definition.ApplicationConfiguration;
 import application.inifile.IniFile;
+import application.mail.EmailListDialog;
 import application.mail.MailConfigurer;
 
-public class PreferencesDialog extends JDialog {
+/**
+ * The standard preferences dialog to be used by this application. Users can
+ * extend this class, in which case there are methods that can be called to
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
+public class PreferencesDialog extends JDialog implements IPreferencesDialog {
 	private static final String EMPTY = "empty";
 
 	private static final long serialVersionUID = 1L;
@@ -61,19 +73,6 @@ public class PreferencesDialog extends JDialog {
 	private static final Color defaultColor = new Color(214, 227, 223);
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			PreferencesDialog dialog = new PreferencesDialog(null);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
 	 * Create the dialog.
 	 */
 	public PreferencesDialog(JFrame parent) {
@@ -82,16 +81,15 @@ public class PreferencesDialog extends JDialog {
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setTitle("Preferences");
 		contentPanel = new ColoredPanel();
-//		contentPanel = new JPanel();
-		getContentPane().setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		add(contentPanel, BorderLayout.CENTER);
 
 		instructions = new JLabel("Complete details below to set preferences");
 		instructions.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		instructions.setHorizontalAlignment(SwingConstants.CENTER);
 		instructions.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(instructions, BorderLayout.NORTH);
+		add(instructions, BorderLayout.NORTH);
 
 		contentPanel.setLayout(new GridLayout(0, 3, 10, 10));
 		lblNewLabel = new JLabel("Logging Level:");
@@ -145,9 +143,8 @@ public class PreferencesDialog extends JDialog {
 		contentPanel.add(bottomColorPreview);
 
 		JPanel buttonPane = new BottomColoredPanel();
-//			JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+		add(buttonPane, BorderLayout.SOUTH);
 
 		okButton = new JButton("Set preferences");
 		okButton.setActionCommand("Save");
@@ -234,28 +231,15 @@ public class PreferencesDialog extends JDialog {
 		saveAdditionalPreferences();
 	}
 
-	/**
-	 * Add items to the GUI. This method is called during initialisation of the GUI,
-	 * and is used to add any additional GUI items that the application may require,
-	 * over and above those already saved.
-	 * 
-	 * @param contentPanel that already contains default preferences.
-	 */
+	@Override
 	public void additionalGUIItems(JPanel contentPanel) {
 	}
 
-	/**
-	 * Add action listeners to additional items. This method is called during
-	 * initialisation of the GUI, and is used to add action listeners to any items
-	 * added by additionalGUIItems.
-	 */
+	@Override
 	public void additionalActionListeners() {
 	}
 
-	/**
-	 * Save additional preferences. This method is called when the user requests
-	 * that the preferences chosen be saved.
-	 */
+	@Override
 	public void saveAdditionalPreferences() {
 	}
 

@@ -1,4 +1,4 @@
-package application.base.app.gui;
+package application.mail;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -27,8 +27,16 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import application.base.app.gui.BottomColoredPanel;
+import application.base.app.gui.ColoredPanel;
 import application.definition.ApplicationConfiguration;
 
+/**
+ * Obtain email list information.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public class EmailListDialog extends JDialog {
 	public static final int OK_PRESSED = 1;
 	public static final int CANCEL_PRESSED = 0;
@@ -51,19 +59,6 @@ public class EmailListDialog extends JDialog {
 	private JButton addButton;
 	private DefaultListModel<String> listModel;
 	private JButton removeButton;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			EmailListDialog dialog = new EmailListDialog(null, "");
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Create the dialog.

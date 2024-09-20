@@ -1,10 +1,19 @@
 package application.inifile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Properties;
 
-import application.definition.*;
+import application.definition.ApplicationConfiguration;
+import application.definition.ApplicationDefinition;
 
+/**
+ * The file to use to store the applications preferences.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public class IniFile {
 	private static Properties values = null;
 
@@ -53,6 +62,9 @@ public class IniFile {
 		saveProperties();
 	}
 
+	/**
+	 * Clear the properties. Generally a method to be used in testing.
+	 */
 	public static synchronized void clear() {
 		values = null;
 	}

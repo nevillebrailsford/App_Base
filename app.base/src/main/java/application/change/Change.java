@@ -1,5 +1,12 @@
 package application.change;
 
+/**
+ * The interface for all objects that want to take part in the change management
+ * function.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public interface Change {
 	enum State {
 		READY, DONE, UNDONE, STUCK

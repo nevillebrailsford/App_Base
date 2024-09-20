@@ -12,6 +12,12 @@ import java.util.logging.Logger;
 import application.definition.ApplicationConfiguration;
 import application.definition.ApplicationDefinition;
 
+/**
+ * Configure the logging service for this application.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public class LogConfigurer {
 	private static Logger LOGGER = null;
 	private static FileHandler fileHandler;

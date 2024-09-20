@@ -10,6 +10,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+/**
+ * Component to display a chart of some kind.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public abstract class ChartComponent extends JComponent implements TableModelListener {
 	private static final long serialVersionUID = 1L;
 
@@ -19,6 +25,12 @@ public abstract class ChartComponent extends JComponent implements TableModelLis
 	protected String[] tips;
 	protected NumberFormat formatter = NumberFormat.getPercentInstance();
 
+	/**
+	 * Create the chart component.
+	 * 
+	 * @param tm - a TableModel that provides the x and y values.
+	 * @param cp - a ChartPainter that actually draws the chart.
+	 */
 	public ChartComponent(TableModel tm, ChartPainter cp) {
 		setUI(cp);
 		this.cp = cp;

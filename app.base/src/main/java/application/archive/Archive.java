@@ -10,6 +10,9 @@ import application.definition.ApplicationConfiguration;
 /**
  * A class that provide the function to copy a model to an archive, that is to
  * save the model.
+ * 
+ * @author neville
+ * @version 3.0.0
  */
 public class Archive {
 	private final static String CLASS_NAME = Archive.class.getName();

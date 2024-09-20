@@ -12,6 +12,12 @@ import application.definition.ApplicationConfiguration;
 import application.definition.ApplicationDefinition;
 import application.definition.BaseConstants;
 
+/**
+ * Formatter for every log record.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public class LogFormatter extends Formatter {
 	private final static DateTimeFormatter formatter = DateTimeFormatter
 			.ofPattern(BaseConstants.dateFormatForLogRecord);
@@ -29,6 +35,9 @@ public class LogFormatter extends Formatter {
 
 	private ApplicationDefinition applicationDefinition;
 
+	/**
+	 * Create the <code>LogFormatter</code>.
+	 */
 	public LogFormatter() {
 		ApplicationDefinition applicationDefinition = ApplicationConfiguration.applicationDefinition();
 		if (applicationDefinition == null) {

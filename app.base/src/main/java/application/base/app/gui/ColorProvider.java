@@ -7,7 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ColorProvider allows a number of pre-defined colours to be chosen by name. It
+ * also provides a random colour by calling <code>nextColor</code>.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public class ColorProvider {
+	/**
+	 * The names of all the colours
+	 */
 	public static final String[] name = new String[] { "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure",
 			"beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue",
 			"chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan",
@@ -71,27 +81,54 @@ public class ColorProvider {
 		return result;
 	}
 
+	/**
+	 * Obtain the next random color.
+	 * 
+	 * @return the next color.
+	 */
 	public synchronized static Color nextColor() {
 		Color result = currentColor;
 		currentColor = colors.get(currentColor);
 		return result;
 	}
 
+	/**
+	 * Provide a starting point from which random colors will be chosen.
+	 * 
+	 * @param start - the starting point.
+	 */
 	public synchronized static void startColor(int start) {
 		if (start >= 0 || start < hex.length - 1) {
 			currentColor = hex2Rgb(hex[start]);
 		}
 	}
 
+	/**
+	 * Obtain the number of colors.
+	 * 
+	 * @return the number of colors.
+	 */
 	public static int colors() {
 		return colors.size();
 	}
 
+	/**
+	 * Convert a hex value of a color to its color.
+	 * 
+	 * @param colorStr - the hex value of the color.
+	 * @return the color.
+	 */
 	public static Color hex2Rgb(String colorStr) {
 		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16),
 				Integer.valueOf(colorStr.substring(5, 7), 16));
 	}
 
+	/**
+	 * Obtain the color with the given name.
+	 * 
+	 * @param name - the name of the color required.
+	 * @return the color.
+	 */
 	public synchronized static Color get(String name) {
 		return names.get(name);
 	}

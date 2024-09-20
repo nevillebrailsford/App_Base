@@ -7,6 +7,9 @@ import java.util.logging.Logger;
  * ApplicationConfiguration contains configuration details specific to the
  * application. For example, it contains the logger being used and the model
  * directory being used.
+ * 
+ * @author neville
+ * @version 3.0.0
  */
 public class ApplicationConfiguration {
 	private static ApplicationDefinition registeredApplication = null;

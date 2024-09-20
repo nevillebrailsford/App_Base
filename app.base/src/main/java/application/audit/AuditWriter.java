@@ -9,6 +9,9 @@ import application.definition.ApplicationDefinition;
 
 /**
  * The class that writes audit information to the audit file.
+ * 
+ * @author neville
+ * @version 3.0.0
  */
 public class AuditWriter {
 	/**

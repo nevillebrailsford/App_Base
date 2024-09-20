@@ -22,7 +22,8 @@ import java.util.logging.Level;
  * <p>
  * All public methods are final except Level() and version().
  * 
- * @author nevil
+ * @author neville
+ * @version 3.0.0
  *
  */
 public class ApplicationDefinition {
@@ -46,10 +47,25 @@ public class ApplicationDefinition {
 		this.applicationName = applicationName;
 	}
 
+	/**
+	 * Obtain information from the manifest file associated with the application.
+	 * 
+	 * @param key - the key for the information requested
+	 * @return the value corresponding to the key in an <code>Optional</code>
+	 * @throws Exception if an error occurs reading the manifest file.
+	 */
 	public static Optional<String> getFromManifest(String key) throws Exception {
 		return getFromManifest(key, ApplicationDefinition.class);
 	}
 
+	/**
+	 * Obtain information from the manifest file associated with the application.
+	 * 
+	 * @param key    - the key for the information requested
+	 * @param caller - the class of the caller.
+	 * @return the value corresponding to the key in an <code>Optional</code>
+	 * @throws Exception if an error occurs reading the manifest file.
+	 */
 	public static Optional<String> getFromManifest(String key, Class<?> caller) throws Exception {
 		String result = null;
 		try {
@@ -158,50 +174,110 @@ public class ApplicationDefinition {
 		return Optional.ofNullable((Color) null);
 	}
 
+	/**
+	 * The name of the application.
+	 * 
+	 * @return the application name.
+	 */
 	public final String applicationName() {
 		return applicationName;
 	}
 
+	/**
+	 * The name of the logger.
+	 * 
+	 * @return the logger name.
+	 */
 	public final String loggerName() {
 		return applicationName;
 	}
 
+	/**
+	 * The directory to be used by the logging facility.
+	 * 
+	 * @return the logging directory.
+	 */
 	public final String loggerDirectory() {
 		return loggerDirectoryFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the logging file.
+	 * 
+	 * @return the logging file name.
+	 */
 	public final String loggerFile() {
 		return loggerFileFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the directory to be used by the audit facility.
+	 * 
+	 * @return the auditing directory
+	 */
 	public final String auditDirectory() {
 		return auditDirectoryFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the audit file.
+	 * 
+	 * @return the audit file name
+	 */
 	public final String auditFile() {
 		return auditFileFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the directory to be used by the archive service.
+	 * 
+	 * @return the name of the archive directory
+	 */
 	public final String archiveDirectory() {
 		return archiveDirectoryFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the archive file.
+	 * 
+	 * @return the archive file name
+	 */
 	public final String archiveFile() {
 		return archiveFileFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the directory to be used by the inifile service.
+	 * 
+	 * @return the name of the infile directory
+	 */
 	public final String iniFileDirectory() {
 		return iniFileDirectoryFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the inifile file.
+	 * 
+	 * @return the inifile file name
+	 */
 	public final String iniFile() {
 		return iniFileFile().getAbsolutePath();
 	}
 
+	/**
+	 * The nme of the directory to be used by the reporting facility.
+	 * 
+	 * @return the report service directory
+	 */
 	public final String reportDirectory() {
 		return reportFileDirectoryFile().getAbsolutePath();
 	}
 
+	/**
+	 * The name of the report file.
+	 * 
+	 * @return the report file name.
+	 */
 	public final String reportItemFile() {
 		return reportItemFileFile().getAbsolutePath();
 	}

@@ -8,6 +8,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 
+/**
+ * Draw the chart.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public abstract class ChartPainter extends ComponentUI {
 	protected Font textFont = new Font("Serif", Font.PLAIN, 12);
 	protected Color textColor = Color.black;

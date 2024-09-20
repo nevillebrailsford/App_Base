@@ -6,6 +6,12 @@ import application.definition.BaseConstants;
 import application.mail.MailConstants;
 import application.storage.StorageConstants;
 
+/**
+ * Provide the constants needed for graphical functions.
+ * 
+ * @author neville
+ * @version 3.0.0
+ */
 public interface GUIConstants extends BaseConstants, StorageConstants, MailConstants {
 	public static final String LAST_TIME = "lastTime";
 	public static final String dateFormatForCalendarView = "EEE dd LLL uuuu";

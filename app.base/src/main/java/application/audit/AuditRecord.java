@@ -10,7 +10,8 @@ import application.definition.BaseConstants;
  * A record that is passed to the audit function to record an activity of some
  * kind.
  * 
- * @author nevil
+ * @author neville
+ * @version 3.0.0
  *
  */
 public class AuditRecord<T extends AuditType, O extends AuditObject> implements Comparable<AuditRecord<T, O>> {
