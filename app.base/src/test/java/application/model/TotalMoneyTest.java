@@ -40,9 +40,20 @@ class TotalMoneyTest {
 	}
 
 	@Test
+	void testAddTotalMoney() {
+		totalMoney.add(moneyToBeTested);
+		totalMoney.add(moneyToBeTested);
+		totalMoney.add(moneyToBeTested);
+		TotalMoney testTotal = new TotalMoney();
+		testTotal.add(totalMoney);
+		assertEquals(TOTAL_COST, testTotal.cost());
+	}
+
+	@Test
 	void testAddNull() {
+		Money NULL = null;
 		assertThrows(IllegalArgumentException.class, () -> {
-			totalMoney.add(null);
+			totalMoney.add(NULL);
 		});
 	}
 
