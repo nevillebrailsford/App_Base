@@ -26,6 +26,7 @@ public class ColoredPanel extends JPanel {
 	 * Create the panel with no layout manager set.
 	 */
 	public ColoredPanel() {
+		super();
 		setOpaque(false);
 	}
 
@@ -35,7 +36,7 @@ public class ColoredPanel extends JPanel {
 	 * @param layout - the layout manager to be used for this panel.
 	 */
 	public ColoredPanel(LayoutManager layout) {
-		super();
+		this();
 		setLayout(layout);
 	}
 
