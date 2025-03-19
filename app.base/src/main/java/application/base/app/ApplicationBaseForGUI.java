@@ -42,11 +42,9 @@ import application.utils.Util;
  * <p>
  * This is the base class for all applications in this framework.
  * <p>
- * You can extend this class and get all the benefits a graphical program with
- * facilities such as logging, auditing, notification, storage already provided.
- * <p>
- * Your program must implement a <code>main</code> method, in which is must make
- * a call to <code>launch</code> to get the GUI up and running.
+ * You can extend this class and get all the benefits of a graphical program
+ * with facilities (such as logging, auditing, notification, storage) already
+ * provided.
  * <p>
  * You define the name and working directory of the application by passing in
  * the following parameters as arguments to the <code>main</code>, which you
@@ -56,9 +54,8 @@ import application.utils.Util;
  * application will use the users <code>home</code> directory.
  * <p>
  * Your application will be called at <code>createApplicationDefinition</code>
- * to define this application.
- * <p>
- * The logging facility will now be enabled.
+ * to define this application. Once this call is complete, the logging facility
+ * will be initialised.
  * <p>
  * Your application will next be called at <code>configureStoreDetails</code> to
  * define the storage requirements for this application. This method is called
@@ -72,36 +69,37 @@ import application.utils.Util;
  * Finally, your application is called at <code>start</code> for you to create
  * the graphical user interface within the provided <code>JFrame</code>.
  * <p>
- * At last, the application will now be displayed on the screen.
+ * Finally, the application window will be displayed on the screen.
  * <p>
  * When your application wants to stop it simply calls the <code>shutdown</code>
  * method. This method will call the method <code>terminate</code> method so
  * that your application can do any tidying up necessary.
  * <p>
- * Finally this application will close.
+ * As a result, this application will close.
  * 
  * @see IApplication
  * 
  * @author neville
- * @version 3.0.0
+ * @version 4.0.0
  * 
  */
 public abstract class ApplicationBaseForGUI extends JFrame implements IApplication {
-	private static final long serialVersionUID = 1L;
-
-	private static final String CLASS_NAME = ApplicationBaseForGUI.class.getName();
-	public static Logger LOGGER;
-
 	public static final String DIR = "dir";
 	public static final String NAME = "name";
+
+	private static final long serialVersionUID = 1L;
+	private static final String CLASS_NAME = ApplicationBaseForGUI.class.getName();
+	private static String mainClass = "";
+	private static ApplicationBaseForGUI application;
+
+	public static Logger LOGGER;
 
 	protected Object loadComplete = new Object();
 	protected Exception loadFailed = null;
 	protected LoadData dataLoader;
-	private StoreDetails storeDetails;
 
+	private StoreDetails storeDetails;
 	private Parameters parameters;
-	private static ApplicationBaseForGUI application;
 
 	protected NotificationListener listener = ((notification) -> {
 		NotificationType notificationType = notification.notificationType();
@@ -186,6 +184,24 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 	}
 
 	/**
+	 * The start of the application.
+	 * <p>
+	 * You define the name and working directory of the application by passing in
+	 * the following parameters as arguments to the <code>main</code>, which you
+	 * then forward to the <code>launch</code> method: <br>
+	 * <code>--name=</code> the name of the application. <br>
+	 * <code>--dir=</code> the path to the working directory. If not specified the
+	 * application will use the users <code>home</code> directory.
+	 * 
+	 * @param args as described above
+	 */
+	public static void main(String[] args) {
+		mainClass = getApplicationsMainClass();
+		System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
+		launch(args);
+	}
+
+	/**
 	 * This call is made during the windowClosing process to allow the application
 	 * to tidy up before the framework itself is shut down.
 	 */
@@ -198,18 +214,18 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 	 * @param args - the arguments as they were passed into the <code>main</code>
 	 *             method.
 	 */
-	public static void launch(String[] args) {
-		Exception ex = new Exception();
-		StackTraceElement stackInfo = ex.getStackTrace()[ex.getStackTrace().length - 1];
-		String className = stackInfo.getClassName();
+	private static void launch(String[] args) {
 		try {
-			Class<?> c = Class.forName(className);
+			Class<?> c = Class.forName(mainClass);
 			Constructor<?> con = c.getConstructor();
 			application = (ApplicationBaseForGUI) con.newInstance();
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
 			e.printStackTrace();
+			System.err.println("ERROR: Unable to load application class.");
+			System.exit(0);
 		}
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -524,6 +540,26 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 		result = builder.toString();
 		LOGGER.exiting(applicationName, "getBuildInformation", result);
 		return result;
+	}
+
+	// Need to determine if we are running in a jar file or outside a jar. If in a
+	// jar file, get the main class from the manifest file.
+	private static String getApplicationsMainClass() {
+		String command = System.getProperty("sun.java.command").split(" ")[0];
+		if (command.endsWith(".jar")) {
+			try {
+				command = getMainClass();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(0);
+			}
+		}
+		return command;
+	}
+
+	// Get the name of the main class from the manifest file in the jar.
+	private static String getMainClass() throws Exception {
+		return ApplicationDefinition.getFromManifest("Main-Class", ApplicationBaseForGUI.class).orElse("Not present");
 	}
 
 }
