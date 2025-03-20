@@ -330,6 +330,24 @@ class MoneyTest {
 	}
 
 	@Test
+	void testNegative() {
+		Money testMoney = new Money("1.00");
+		assertEquals(false, testMoney.isNegative());
+		testMoney = testMoney.negate();
+		assertEquals(true, testMoney.isNegative());
+		testMoney = new Money("0.00");
+		assertEquals(false, testMoney.isNegative());
+	}
+
+	@Test
+	void testAbs() {
+		Money testMoney = new Money("1.00");
+		assertEquals(new Money("1.00"), testMoney.abs());
+		Money negMoney = testMoney.negate();
+		assertEquals(new Money("1.00"), negMoney.abs());
+	}
+
+	@Test
 	void testNullString() {
 		assertThrows(IllegalArgumentException.class, () -> {
 			new Money((String) null);

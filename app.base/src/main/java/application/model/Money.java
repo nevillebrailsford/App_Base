@@ -165,6 +165,14 @@ public final class Money implements Comparable<Money> {
 		return times(-1);
 	}
 
+	public Money abs() {
+		return new Money(amount.abs());
+	}
+
+	public boolean isNegative() {
+		return amount.compareTo(BigDecimal.ZERO) < 0;
+	}
+
 	private BigDecimal createRounded(Money amount) {
 		return createRounded(amount.amount());
 	}
