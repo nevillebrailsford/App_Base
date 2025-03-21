@@ -2,24 +2,27 @@ package application.base.app.gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.table.TableCellRenderer;
 
 import application.model.Money;
 
-public class MoneyCellRenderer extends JLabel implements TableCellRenderer {
+/**
+ * A table cell renderer to format Money class fields in a consistent way.
+ * 
+ * @author neville
+ * @version 4.0.0
+ */
+public class MoneyCellRenderer extends BaseCellRenderer {
 	private static final long serialVersionUID = 1L;
-	private static final Color originalBackground = UIManager.getColor("Table.Background");
-	private static final Color originalSelectionBackground = UIManager.getColor("Table.selectionBackground");
 
+	/**
+	 * Constructor that sets up default behaviour and then ensures that the money
+	 * value will be displayed right aligned.
+	 */
 	public MoneyCellRenderer() {
-		setFont(getFont().deriveFont(Font.BOLD, 14));
-		setOpaque(true);
+		super();
 		setHorizontalAlignment(SwingConstants.RIGHT);
 	}
 

@@ -1,28 +1,28 @@
 package application.base.app.gui;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.table.TableCellRenderer;
 
-public class DateCellRenderer extends JLabel implements TableCellRenderer {
+/**
+ * A table cell renderer to format LocalDate class fields in a consistent way.
+ * 
+ * @author neville
+ * @version 4.0.0
+ */
+public class DateCellRenderer extends BaseCellRenderer {
 	private static final long serialVersionUID = 1L;
-	private static final Color originalForeground = UIManager.getColor("Table.Foreground");
-	private static final Color originalBackground = UIManager.getColor("Table.Background");
-	private static final Color originalSelectionForeground = UIManager.getColor("Table.selectionForeground");
-	private static final Color originalSelectionBackground = UIManager.getColor("Table.selectionBackground");
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
 
+	/**
+	 * Constructor that sets up default behaviour and then ensures that the date
+	 * will be displayed centrally.
+	 */
 	public DateCellRenderer() {
-		setFont(getFont().deriveFont(Font.PLAIN, 14));
-		setOpaque(true);
+		super();
 		setHorizontalAlignment(SwingConstants.CENTER);
 	}
 
