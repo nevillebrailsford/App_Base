@@ -23,7 +23,8 @@ import java.util.logging.Level;
  * All public methods are final except Level() and version().
  * 
  * @author neville
- * @version 3.0.0
+ * @version 4.1.0
+ * @since 3.0.0
  *
  */
 public class ApplicationDefinition {
@@ -154,6 +155,15 @@ public class ApplicationDefinition {
 	 */
 	public boolean hasModelFile() {
 		return true;
+	}
+
+	/**
+	 * Does the application require a user sign on before using the application.
+	 * 
+	 * @return true if user must sign on, false otherwise.
+	 */
+	public boolean requiresSecurity() {
+		return false;
 	}
 
 	/**

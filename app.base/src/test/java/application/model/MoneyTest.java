@@ -22,8 +22,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 class MoneyTest {
-	private static final String SAMPLE_MONEY = "100.99";
-	private static final String SAMPLE_COST = "£100.99";
+	private static final String SAMPLE_MONEY = "1000.99";
+	private static final String SAMPLE_COST = "£1,000.99";
 	private Money moneyToBeTested = new Money(SAMPLE_MONEY);
 	Document document;
 
@@ -194,6 +194,36 @@ class MoneyTest {
 	void testEqualsNull() {
 		Money money1 = new Money("20.00");
 		assertFalse(money1.equals(null));
+	}
+
+	@Test
+	void testIsZero() {
+		Money money1 = new Money("0.00");
+		assertTrue(money1.isZero());
+	}
+
+	@Test
+	void testZero() {
+		Money money1 = Money.zero();
+		assertNotNull(money1);
+		Money money2 = new Money("0.00");
+		assertEquals(money1, money2);
+	}
+
+	@Test
+	void testIsPositive() {
+		Money money1 = new Money("0.00");
+		assertTrue(money1.isPositive());
+		money1 = new Money("0.01");
+		assertTrue(money1.isPositive());
+	}
+
+	@Test
+	void testIsNegative() {
+		Money money1 = new Money("0.01");
+		Money money2 = new Money("0.00");
+		Money money3 = money2.minus(money1);
+		assertTrue(money3.isNegative());
 	}
 
 	@SuppressWarnings("unlikely-arg-type")

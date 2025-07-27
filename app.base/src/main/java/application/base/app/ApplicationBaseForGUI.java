@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +28,8 @@ import application.notification.NotificationListener;
 import application.notification.NotificationMonitor;
 import application.notification.NotificationType;
 import application.preferences.PreferencesDialog;
+import application.security.DBLogin;
+import application.security.DBSecurity;
 import application.storage.LoadData;
 import application.storage.LoadState;
 import application.storage.Storage;
@@ -40,27 +41,25 @@ import application.utils.Util;
 
 /**
  * <p>
- * This is the base class for all applications in this framework.
+ * This is the base class for all Swing based applications in this framework.
  * <p>
  * You can extend this class and get all the benefits of a graphical program
  * with facilities (such as logging, auditing, notification, storage) already
  * provided.
  * <p>
  * You define the name and working directory of the application by passing in
- * the following parameters as arguments to the <code>main</code>, which you
- * then forward to the <code>launch</code> method: <br>
+ * the following parameters as arguments to the <code>main</code>, which are
+ * then forwarded to the <code>launch</code> method: <br>
  * <code>--name=</code> the name of the application. <br>
  * <code>--dir=</code> the path to the working directory. If not specified the
  * application will use the users <code>home</code> directory.
  * <p>
  * Your application will be called at <code>createApplicationDefinition</code>
- * to define this application. Once this call is complete, the logging facility
- * will be initialised.
+ * to define this application's specific requirements. Once this call is
+ * complete, the logging facility will be initialised.
  * <p>
  * Your application will next be called at <code>configureStoreDetails</code> to
- * define the storage requirements for this application. This method is called
- * to create a new <code>StoreDetails</code> object and store it in
- * <code>storeDetails</code>.
+ * define the storage requirements for this application.
  * <p>
  * If your application requires its model to be loaded into storage, this will
  * occur now, and this class will wait for the load to complete before
@@ -72,21 +71,31 @@ import application.utils.Util;
  * Finally, the application window will be displayed on the screen.
  * <p>
  * When your application wants to stop it simply calls the <code>shutdown</code>
- * method. This method will call the method <code>terminate</code> method so
- * that your application can do any tidying up necessary.
+ * method. This method will call <code>terminate</code> so that your application
+ * can do any tidying up necessary.
  * <p>
  * As a result, this application will close.
+ * <p>
+ * Information for using MySQL database. You must provide a properties file in
+ * the root directory (as defined in --dir see above), that contains the
+ * following properties and values. This file must be called
+ * <code>security.properties</code><br>
+ * <code>Administrator</code> the MySQL administrator user.<br>
+ * <code>Password</code> the password for the administrator. <br>
+ * <code>Key</code> the secret key used to encrypt all other passwords stored in
+ * the database. This must be 16 characters in length.<br>
+ * <code>Url</code> the JDBC URL to the MySQL server to be used by the
+ * application.<br>
+ * <code>Database</code> the name of the database that holds all the tables for
+ * the application.
  * 
  * @see IApplication
  * 
  * @author neville
- * @version 4.0.0
+ * @version 4.1.0
  * 
  */
 public abstract class ApplicationBaseForGUI extends JFrame implements IApplication {
-	public static final String DIR = "dir";
-	public static final String NAME = "name";
-
 	private static final long serialVersionUID = 1L;
 	private static final String CLASS_NAME = ApplicationBaseForGUI.class.getName();
 	private static String mainClass = "";
@@ -173,14 +182,7 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 
 	@Override
 	public StoreDetails configureStoreDetails() {
-		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void start(JFrame frame) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -196,9 +198,11 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 	 * @param args as described above
 	 */
 	public static void main(String[] args) {
+		System.out.println(">main");
 		mainClass = getApplicationsMainClass();
 		System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
 		launch(args);
+		System.out.println("<main");
 	}
 
 	/**
@@ -208,13 +212,26 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 	public abstract void terminate();
 
 	/**
-	 * Launch the application and establish all the graphical environment needed to
-	 * show the window on the screen.
+	 * Obtain the <code>Parameters</code> object that contains the arguments passed
+	 * into <code>launch</code> in a more structured fashion.
 	 * 
-	 * @param args - the arguments as they were passed into the <code>main</code>
-	 *             method.
+	 * @return the <code>Parameters</code> object.
 	 */
+	public Parameters getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * Shut this application down.
+	 */
+	public void shutdown() {
+		LOGGER.entering(CLASS_NAME, "shutdown");
+		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		LOGGER.exiting(CLASS_NAME, "shutdown");
+	}
+
 	private static void launch(String[] args) {
+		System.out.println(">launch");
 		try {
 			Class<?> c = Class.forName(mainClass);
 			Constructor<?> con = c.getConstructor();
@@ -237,28 +254,11 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 				}
 			}
 		});
-	}
-
-	/**
-	 * Obtain the <code>Parameters</code> object that contains the arguments passed
-	 * into <code>launch</code> in a more structured fashion.
-	 * 
-	 * @return the <code>Parameters</code> object.
-	 */
-	public Parameters getParameters() {
-		return parameters;
-	}
-
-	/**
-	 * Shut this application down.
-	 */
-	public void shutdown() {
-		LOGGER.entering(CLASS_NAME, "shutdown");
-		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		LOGGER.exiting(CLASS_NAME, "shutdown");
+		System.out.println("<launch");
 	}
 
 	private void createEnvironment(String[] args) {
+		System.out.println(">createEnvironment");
 		parameters = new Parameters(args);
 		try {
 			application.init();
@@ -267,8 +267,8 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		application.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		application.addWindowListener(new WindowAdapter() {
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				try {
@@ -280,29 +280,42 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 			}
 		});
 		application.setTitle(ApplicationConfiguration.applicationDefinition().applicationName());
-		application.start(application);
+		application.start(this);
 		application.setLocationRelativeTo(null);
 		application.setVisible(true);
+		System.out.println("<createEnvironment");
 	}
 
 	private void init() throws Exception {
+		System.out.println(">init");
 		Parameters parameters = getParameters();
-		if (invalidParameters(parameters)) {
+		if (ParametersUtility.invalidParameters(parameters)) {
 			String message = "Usage: java -jar jar_name <--name=application name> <--dir=base directory>";
-			System.out.println(message);
-			JOptionPane.showMessageDialog(null, message);
+			ErrorReporter.displayError(message);
 			System.exit(0);
 		}
 		configureApplication(parameters);
 		if (!LockManager.lock()) {
 			String message = "Another instance of " + ApplicationConfiguration.applicationDefinition().applicationName()
 					+ " is running. This instance is stopping.";
-			System.out.println(message);
-			JOptionPane.showMessageDialog(null, message);
+			ErrorReporter.displayError(message);
 			System.exit(0);
 		}
 		addShutDownHook();
+		if (ApplicationConfiguration.applicationDefinition().requiresSecurity()
+				&& !DBSecurity.processSecurityProperties()) {
+			String message = "Unable to process security properties. This instance is stopping.";
+			ErrorReporter.displayError(message);
+			System.exit(0);
+		}
 		configureLogging();
+		if (ApplicationConfiguration.applicationDefinition().requiresSecurity()) {
+			if (!DBLogin.instance().login()) {
+				String message = "Cannot proceed without a successful login. This application is terminating.";
+				ErrorReporter.displayError(message);
+				System.exit(0);
+			}
+		}
 		storeDetails = configureStoreDetails();
 		LOGGER = ApplicationConfiguration.logger();
 		if (!IniFile.value(BaseConstants.MONITORING).isBlank()) {
@@ -313,12 +326,13 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 			IniFile.store(BaseConstants.MONITORING, "true");
 			new NotificationMonitor(System.out);
 		}
-		NotificationCentre.addListener(listener);
 		setLookAndFeel();
 		if (ApplicationConfiguration.applicationDefinition().hasModelFile()) {
+			NotificationCentre.addListener(listener);
 			loadModelAndWait(storeDetails);
+			NotificationCentre.removeListener(listener);
 		}
-		NotificationCentre.removeListener(listener);
+		System.out.println("<init");
 	}
 
 	private void setLookAndFeel() {
@@ -365,30 +379,6 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 			}
 		};
 		Runtime.getRuntime().addShutdownHook(new Thread(runner, "Application Hook"));
-	}
-
-	private boolean invalidParameters(Parameters parameters) {
-		return (tooMany(parameters) || mixedTypeOf(parameters) || wrongNameIn(parameters));
-	}
-
-	private boolean tooMany(Parameters parameters) {
-		return parameters.getRaw().size() > 2;
-	}
-
-	private boolean mixedTypeOf(Parameters parameters) {
-		return parameters.getRaw().size() != parameters.getNamed().size();
-	}
-
-	private boolean wrongNameIn(Parameters parameters) {
-		boolean wrongName = false;
-		Iterator<String> it = parameters.getNamed().keySet().iterator();
-		while (it.hasNext()) {
-			String name = it.next();
-			if (!name.equals(NAME) && !name.equals(DIR)) {
-				wrongName = true;
-			}
-		}
-		return wrongName;
 	}
 
 	private void configureLogging() {

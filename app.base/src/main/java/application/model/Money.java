@@ -11,10 +11,19 @@ import java.util.Objects;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * Represent British pounds and pence.
+ * 
+ * @author neville
+ * @version 4.1.0
+ * @since 1.0.0
+ *
+ */
 public final class Money implements Comparable<Money> {
 
 	private static RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
 	private static int DECIMAL_PLACES = 2;
+	private static Money ZERO = new Money(BigDecimal.ZERO);
 
 	private BigDecimal amount = null;
 
@@ -137,6 +146,10 @@ public final class Money implements Comparable<Money> {
 		return min;
 	}
 
+	public static Money zero() {
+		return ZERO;
+	}
+
 	public Money plus(Money addition) {
 		return plus(addition.amount());
 	}
@@ -171,6 +184,14 @@ public final class Money implements Comparable<Money> {
 
 	public boolean isNegative() {
 		return amount.compareTo(BigDecimal.ZERO) < 0;
+	}
+
+	public boolean isZero() {
+		return amount.compareTo(BigDecimal.ZERO) == 0;
+	}
+
+	public boolean isPositive() {
+		return amount.compareTo(BigDecimal.ZERO) >= 0;
 	}
 
 	private BigDecimal createRounded(Money amount) {
@@ -225,7 +246,8 @@ public final class Money implements Comparable<Money> {
 	}
 
 	public String cost() {
-		return "£" + amount.toPlainString();
+		DecimalFormat df = new DecimalFormat("#,##0.00");
+		return "£" + df.format(amount);
 	}
 
 	public static class Builder {
