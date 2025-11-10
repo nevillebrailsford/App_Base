@@ -158,11 +158,11 @@ public class ApplicationDefinition {
 	}
 
 	/**
-	 * Does the application require a user sign on before using the application.
+	 * Does the application require a user password before using the application.
 	 * 
-	 * @return true if user must sign on, false otherwise.
+	 * @return true if user must enter password, false otherwise.
 	 */
-	public boolean requiresSecurity() {
+	public boolean requiresPasswordProtection() {
 		return false;
 	}
 

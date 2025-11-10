@@ -29,7 +29,7 @@ import application.notification.NotificationMonitor;
 import application.notification.NotificationType;
 import application.preferences.PreferencesDialog;
 import application.security.DBLogin;
-import application.security.DBSecurity;
+import application.security.Security;
 import application.storage.LoadData;
 import application.storage.LoadState;
 import application.storage.Storage;
@@ -65,6 +65,10 @@ import application.utils.Util;
  * occur now, and this class will wait for the load to complete before
  * proceeding.
  * <p>
+ * If you want, password protection can be enabled for the application. All
+ * applications using the same root directory will share the password protection
+ * properties file.
+ * <p>
  * Finally, your application is called at <code>start</code> for you to create
  * the graphical user interface within the provided <code>JFrame</code>.
  * <p>
@@ -76,18 +80,12 @@ import application.utils.Util;
  * <p>
  * As a result, this application will close.
  * <p>
- * Information for using MySQL database. You must provide a properties file in
- * the root directory (as defined in --dir see above), that contains the
- * following properties and values. This file must be called
- * <code>security.properties</code><br>
- * <code>Administrator</code> the MySQL administrator user.<br>
- * <code>Password</code> the password for the administrator. <br>
- * <code>Key</code> the secret key used to encrypt all other passwords stored in
- * the database. This must be 16 characters in length.<br>
- * <code>Url</code> the JDBC URL to the MySQL server to be used by the
- * application.<br>
- * <code>Database</code> the name of the database that holds all the tables for
- * the application.
+ * Information for using password protection. You must provide a properties file
+ * in the root directory (as defined in --dir see above), that contains the
+ * following property and value. This file must be called
+ * <code>password.properties</code><br>
+ * <code>Key</code> the secret key used to encrypt all passwords stored for the
+ * application. This must be 16 characters in length.<br>
  * 
  * @see IApplication
  * 
@@ -292,6 +290,8 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 		if (ParametersUtility.invalidParameters(parameters)) {
 			String message = "Usage: java -jar jar_name <--name=application name> <--dir=base directory>";
 			ErrorReporter.displayError(message);
+			System.out.println("<init");
+			System.out.println("<createEnvironment");
 			System.exit(0);
 		}
 		configureApplication(parameters);
@@ -299,20 +299,26 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 			String message = "Another instance of " + ApplicationConfiguration.applicationDefinition().applicationName()
 					+ " is running. This instance is stopping.";
 			ErrorReporter.displayError(message);
+			System.out.println("<init");
+			System.out.println("<createEnvironment");
 			System.exit(0);
 		}
 		addShutDownHook();
-		if (ApplicationConfiguration.applicationDefinition().requiresSecurity()
-				&& !DBSecurity.processSecurityProperties()) {
-			String message = "Unable to process security properties. This instance is stopping.";
+		if (ApplicationConfiguration.applicationDefinition().requiresPasswordProtection()
+				&& !Security.processPasswordProperties()) {
+			String message = "Unable to process passsword properties. This instance is stopping.";
 			ErrorReporter.displayError(message);
+			System.out.println("<init");
+			System.out.println("<createEnvironment");
 			System.exit(0);
 		}
 		configureLogging();
-		if (ApplicationConfiguration.applicationDefinition().requiresSecurity()) {
+		if (ApplicationConfiguration.applicationDefinition().requiresPasswordProtection()) {
 			if (!DBLogin.instance().login()) {
 				String message = "Cannot proceed without a successful login. This application is terminating.";
 				ErrorReporter.displayError(message);
+				System.out.println("<init");
+				System.out.println("<createEnvironment");
 				System.exit(0);
 			}
 		}

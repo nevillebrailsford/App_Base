@@ -18,7 +18,7 @@ import application.notification.NotificationCentre;
 import application.notification.NotificationListener;
 import application.notification.NotificationMonitor;
 import application.notification.NotificationType;
-import application.security.DBSecurity;
+import application.security.Security;
 import application.storage.LoadData;
 import application.storage.LoadState;
 import application.storage.Storage;
@@ -54,6 +54,10 @@ import application.timer.TimerService;
  * occur now, and this class will wait for the load to complete before
  * proceeding.
  * <p>
+ * If you want, password protection can be enabled for the application. All
+ * applications using the same root directory will share the password protection
+ * properties file.
+ * <p>
  * Finally, your application is called at <code>run</code> for your code to
  * perform its processing.
  * <p>
@@ -62,18 +66,12 @@ import application.timer.TimerService;
  * <p>
  * After returning from this method, this application will close.
  * <p>
- * Information for using MySQL database. You must provide a properties file in
- * the root directory (as defined in --dir see above), that contains the
- * following properties and values. This file must be called
- * <code>security.properties</code><br>
- * <code>Administrator</code> the MySQL administrator user.<br>
- * <code>Password</code> the password for the administrator. <br>
- * <code>Key</code> the secret key used to encrypt all other passwords stored in
- * the database. This must be 16 characters in length.<br>
- * <code>Url</code> the JDBC URL to the MySQL server to be used by the
- * application.<br>
- * <code>Database</code> the name of the database that holds all the tables for
- * the application.
+ * Information for using password protection. You must provide a properties file
+ * in the root directory (as defined in --dir see above), that contains the
+ * following property and value. This file must be called
+ * <code>password.properties</code><br>
+ * <code>Key</code> the secret key used to encrypt all passwords stored for the
+ * application. This must be 16 characters in length.<br>
  * 
  * @see IApplication
  * 
@@ -204,8 +202,8 @@ public abstract class ApplicationBaseForCommand implements IApplication {
 			System.exit(0);
 		}
 		addShutDownHook();
-		if (ApplicationConfiguration.applicationDefinition().requiresSecurity()
-				&& !DBSecurity.processSecurityProperties()) {
+		if (ApplicationConfiguration.applicationDefinition().requiresPasswordProtection()
+				&& !Security.processPasswordProperties()) {
 			String message = "Unable to process security properties. This instance is stopping.";
 			ErrorReporter.displayError(message);
 			System.exit(0);
