@@ -65,13 +65,6 @@ import application.timer.TimerService;
  * will be called so that your application can do any tidying up necessary.
  * <p>
  * After returning from this method, this application will close.
- * <p>
- * Information for using password protection. You must provide a properties file
- * in the root directory (as defined in --dir see above), that contains the
- * following property and value. This file must be called
- * <code>password.properties</code><br>
- * <code>Key</code> the secret key used to encrypt all passwords stored for the
- * application. This must be 16 characters in length.<br>
  * 
  * @see IApplication
  * 

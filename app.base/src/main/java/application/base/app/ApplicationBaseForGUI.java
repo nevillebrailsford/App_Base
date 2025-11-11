@@ -16,6 +16,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import application.archive.Archive;
+import application.base.app.gui.PasswordEntry;
 import application.change.ChangeManager;
 import application.definition.ApplicationConfiguration;
 import application.definition.ApplicationDefinition;
@@ -28,7 +29,7 @@ import application.notification.NotificationListener;
 import application.notification.NotificationMonitor;
 import application.notification.NotificationType;
 import application.preferences.PreferencesDialog;
-import application.security.DBLogin;
+import application.security.PasswordHandler;
 import application.security.Security;
 import application.storage.LoadData;
 import application.storage.LoadState;
@@ -314,8 +315,9 @@ public abstract class ApplicationBaseForGUI extends JFrame implements IApplicati
 		}
 		configureLogging();
 		if (ApplicationConfiguration.applicationDefinition().requiresPasswordProtection()) {
-			if (!DBLogin.instance().login()) {
-				String message = "Cannot proceed without a successful login. This application is terminating.";
+			new PasswordEntry("Enter Password").setVisible(true);
+			if (!PasswordHandler.instance().validPassword()) {
+				String message = "Cannot proceed without a valid password. This application is terminating.";
 				ErrorReporter.displayError(message);
 				System.out.println("<init");
 				System.out.println("<createEnvironment");

@@ -40,7 +40,7 @@ public class PasswordEncryptor {
 	 * 
 	 * @return
 	 */
-	public static PasswordEncryptor instance() {
+	public static synchronized PasswordEncryptor instance() {
 		LOGGER.entering(CLASS_NAME, "instance");
 		if (instance == null) {
 			instance = new PasswordEncryptor();
