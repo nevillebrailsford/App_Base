@@ -149,7 +149,8 @@ public class ApplicationDefinition {
 	}
 
 	/**
-	 * Does the application require a model to be stored in a model file.
+	 * Does the application require a model to be stored in a model file. The
+	 * default is set to true.
 	 * 
 	 * @return true if there is a model file, false otherwise.
 	 */
@@ -159,11 +160,12 @@ public class ApplicationDefinition {
 
 	/**
 	 * Does the application require a user password before using the application.
+	 * The deault is set to true.
 	 * 
 	 * @return true if user must enter password, false otherwise.
 	 */
 	public boolean requiresPasswordProtection() {
-		return false;
+		return true;
 	}
 
 	/**
