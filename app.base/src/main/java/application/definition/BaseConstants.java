@@ -26,6 +26,8 @@ public interface BaseConstants {
 	public static final String dateFormatForAuditRecord = "uuuu/MM/dd HH:mm:ss zzz";
 	public static final String dateFormatForArchiveFileName = "-uuuu-MM-dd-HH-mm-ss";
 
+	public static final String displayDate = "dd/MM/uuuu";
+
 	public static final String TIMER_CATEGORY = "timer";
 
 }
