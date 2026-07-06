@@ -35,12 +35,12 @@ public class MoneyCellRenderer extends BaseCellRenderer {
 		} else {
 			setBackground(originalBackground);
 		}
-		if (val.isNegative()) {
+		if (val != null && val.isNegative()) {
 			setForeground(Color.red.darker());
 		} else {
 			setForeground(Color.green.darker());
 		}
-		setText(val.cost());
+		setText(val == null ? " " : val.cost());
 		return this;
 	}
 }
